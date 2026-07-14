@@ -22,7 +22,7 @@ export default function SectionLabel({
   return (
     <header
       className={cn(
-        "mb-12 md:mb-16",
+        "mb-14 md:mb-20",
         align === "center" && "text-center",
         className
       )}

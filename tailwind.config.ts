@@ -27,7 +27,8 @@ const config: Config = {
       },
       fontFamily: {
         sans: ["var(--font-sans)", "Inter", "sans-serif"],
-        display: ["var(--font-display)", "Space Grotesk", "sans-serif"],
+        display: ["var(--font-display)", "Chakra Petch", "sans-serif"],
+        hero: ["var(--font-hero)", "Orbitron", "sans-serif"],
         mono: ["var(--font-mono)", "JetBrains Mono", "monospace"],
       },
       maxWidth: {

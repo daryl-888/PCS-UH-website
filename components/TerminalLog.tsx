@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useInView } from "framer-motion";
 import { usePrefersReducedMotion } from "@/lib/hooks";
 import { cn } from "@/lib/utils";
+import TerminalTitlebar from "@/components/TerminalTitlebar";
 
 type TerminalLogProps = {
   lines: string[];
@@ -50,16 +51,7 @@ export default function TerminalLog({
       role="log"
       aria-label="System activity log"
     >
-      <div className="flex items-center justify-between border-b border-line px-4 py-2">
-        <span className="text-[10px] tracking-[0.24em] text-textMuted">
-          PCS://ACTIVITY_STREAM
-        </span>
-        <span className="flex gap-1.5" aria-hidden>
-          <span className="h-2 w-2 rounded-full bg-uhred/70" />
-          <span className="h-2 w-2 rounded-full bg-amber-300/70" />
-          <span className="h-2 w-2 rounded-full bg-gpu/80" />
-        </span>
-      </div>
+      <TerminalTitlebar label="PCS://ACTIVITY_STREAM" />
       <div className="min-h-[132px] space-y-1.5 px-4 py-3">
         {lines.slice(0, visible).map((line) => (
           <p key={line} className="text-textSecondary">

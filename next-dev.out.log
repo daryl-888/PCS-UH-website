@@ -1,0 +1,32 @@
+
+> uh-pcs@1.0.0 dev
+> next dev
+
+▲ Next.js 16.2.10 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://10.0.10.121:3000
+✓ Ready in 363ms
+
+ GET / 200 in 364ms (next.js: 102ms, application-code: 261ms)
+ GET / 200 in 87ms (next.js: 2ms, application-code: 85ms)
+ GET / 200 in 109ms (next.js: 4ms, application-code: 106ms)
+ GET /api/v1/courses?per_page=2 404 in 86ms (next.js: 22ms, application-code: 64ms)
+ GET /api/v1/courses?per_page=2 404 in 33ms (next.js: 3ms, application-code: 29ms)
+✓ Compiled in 164ms
+ GET / 200 in 126ms (next.js: 78ms, application-code: 48ms)
+✓ Compiled in 205ms
+ GET / 200 in 101ms (next.js: 53ms, application-code: 48ms)
+✓ Compiled in 42ms
+ GET / 200 in 230ms (next.js: 3ms, application-code: 227ms)
+ GET / 200 in 170ms (next.js: 3ms, application-code: 166ms)
+ GET /api/v1/courses?per_page=2 404 in 83ms (next.js: 17ms, application-code: 66ms)
+ GET /api/v1/courses?per_page=2 404 in 41ms (next.js: 5ms, application-code: 36ms)
+ GET / 200 in 145ms (next.js: 5ms, application-code: 141ms)
+ GET /api/v1/courses?per_page=2 404 in 48ms (next.js: 7ms, application-code: 41ms)
+ GET /api/v1/courses?per_page=2 404 in 36ms (next.js: 5ms, application-code: 31ms)
+ GET / 200 in 146ms (next.js: 3ms, application-code: 143ms)
+ GET /api/v1/courses?per_page=2 404 in 42ms (next.js: 5ms, application-code: 37ms)
+ GET /api/v1/courses?per_page=2 404 in 46ms (next.js: 4ms, application-code: 42ms)
+ GET / 200 in 114ms (next.js: 2ms, application-code: 112ms)
+ GET /api/v1/courses?per_page=2 404 in 48ms (next.js: 4ms, application-code: 44ms)
+ GET /api/v1/courses?per_page=2 404 in 45ms (next.js: 5ms, application-code: 40ms)

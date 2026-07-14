@@ -10,7 +10,7 @@ export default function Events() {
   return (
     <section
       id="events"
-      className="relative border-t border-line py-24 md:py-32"
+      className="relative border-t border-line py-28 md:py-36"
       aria-label="Upcoming events"
     >
       <div className="mx-auto max-w-site px-4 sm:px-6 lg:px-10">

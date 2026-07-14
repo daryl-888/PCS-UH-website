@@ -5,6 +5,7 @@ import { Layers, Boxes, Network } from "lucide-react";
 import SectionLabel from "@/components/SectionLabel";
 import GlassCard from "@/components/GlassCard";
 import Reveal from "@/components/Reveal";
+import TerminalTitlebar from "@/components/TerminalTitlebar";
 
 const pillars = [
   {
@@ -119,7 +120,7 @@ function ComputeDiagram() {
 
 export default function Mission() {
   return (
-    <section id="mission" className="relative py-24 md:py-32" aria-label="Mission">
+    <section id="mission" className="relative py-28 md:py-36" aria-label="Mission">
       <div className="mx-auto max-w-site px-4 sm:px-6 lg:px-10">
         <div className="grid items-start gap-12 lg:grid-cols-2 lg:gap-16">
           {/* copy */}
@@ -164,10 +165,10 @@ export default function Mission() {
           {/* diagram */}
           <Reveal delay={0.15} className="lg:sticky lg:top-28">
             <GlassCard className="p-6" corners beam>
-              <div className="mb-4 flex items-center justify-between font-mono text-[10px] tracking-[0.24em]">
-                <span className="text-gpu">[TOPOLOGY://LIVE]</span>
-                <span className="text-textMuted">8 NODES · 11 LINKS</span>
-              </div>
+              <TerminalTitlebar
+                label="[TOPOLOGY://LIVE] · 8 NODES · 11 LINKS"
+                className="-mx-6 -mt-6 mb-5"
+              />
               <div className="aspect-square w-full">
                 <ComputeDiagram />
               </div>

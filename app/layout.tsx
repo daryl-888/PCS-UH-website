@@ -44,10 +44,10 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
         <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Chakra+Petch:wght@500;600;700&family=Orbitron:wght@700;800;900&family=JetBrains+Mono:wght@400;500&display=swap"
           rel="stylesheet"
         />
-        <style>{`:root{--font-sans:'Inter';--font-display:'Space Grotesk';--font-mono:'JetBrains Mono';}`}</style>
+        <style>{`:root{--font-sans:'Inter';--font-display:'Chakra Petch';--font-hero:'Orbitron';--font-mono:'JetBrains Mono';}`}</style>
       </head>
       <body className="font-sans">
         <a

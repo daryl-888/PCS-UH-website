@@ -27,7 +27,7 @@ export default function Offerings() {
   return (
     <section
       id="workshops"
-      className="relative border-t border-line py-24 md:py-32"
+      className="relative border-t border-line py-28 md:py-36"
       aria-label="What we offer"
     >
       <div className="mx-auto max-w-site px-4 sm:px-6 lg:px-10">
@@ -39,7 +39,7 @@ export default function Offerings() {
           />
         </Reveal>
 
-        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {offerings.map((offering, i) => {
             const Icon = icons[offering.icon] ?? Cpu;
             return (

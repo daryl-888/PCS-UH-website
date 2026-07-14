@@ -53,7 +53,7 @@ export default function Officers() {
   return (
     <section
       id="officers"
-      className="relative border-t border-line py-24 md:py-32"
+      className="relative border-t border-line py-28 md:py-36"
       aria-label="Officers"
     >
       <div className="mx-auto max-w-site px-4 sm:px-6 lg:px-10">
@@ -65,7 +65,7 @@ export default function Officers() {
           />
         </Reveal>
 
-        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {officers.map((officer, i) => (
             <Reveal key={officer.id} delay={(i % 3) * 0.08} as="li">
               <GlassCard className="relative h-full overflow-hidden p-6" corners>

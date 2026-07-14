@@ -4,6 +4,7 @@ import { CheckCircle2, FileDown, Presentation } from "lucide-react";
 import SectionLabel from "@/components/SectionLabel";
 import GlassCard from "@/components/GlassCard";
 import Reveal from "@/components/Reveal";
+import TerminalTitlebar from "@/components/TerminalTitlebar";
 import { sponsorBenefits } from "@/data/sponsors";
 import { CONTACT_EMAIL } from "@/data/nav";
 
@@ -11,7 +12,7 @@ export default function Sponsors() {
   return (
     <section
       id="sponsors"
-      className="relative border-t border-line py-24 md:py-32"
+      className="relative border-t border-line py-28 md:py-36"
       aria-label="Sponsorship"
     >
       <div className="mx-auto max-w-site px-4 sm:px-6 lg:px-10">
@@ -27,9 +28,10 @@ export default function Sponsors() {
           {/* benefits */}
           <Reveal>
             <GlassCard className="p-6 sm:p-8" corners>
-              <p className="mb-6 font-mono text-[10px] tracking-[0.24em] text-textMuted">
-                SPONSORSHIP_MANIFEST.TXT
-              </p>
+              <TerminalTitlebar
+                label="SPONSORSHIP_MANIFEST.TXT"
+                className="-mx-6 -mt-6 mb-6 sm:-mx-8 sm:-mt-8"
+              />
               <ul className="grid gap-x-8 gap-y-5 sm:grid-cols-2">
                 {sponsorBenefits.map((benefit) => (
                   <li key={benefit.id} className="flex items-start gap-3">

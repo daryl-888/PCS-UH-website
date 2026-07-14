@@ -1,29 +1,16 @@
 "use client";
 
-import { useRef } from "react";
-import dynamic from "next/dynamic";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowRight, ChevronRight } from "lucide-react";
+import { motion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
 import AnimatedGrid from "@/components/AnimatedGrid";
-import StatusBadge from "@/components/StatusBadge";
+import TerminalTitlebar from "@/components/TerminalTitlebar";
 
-const GpuModel = dynamic(() => import("@/components/GpuModel"), {
-  ssr: false,
-  loading: () => (
-    <div className="flex h-full w-full items-center justify-center">
-      <span className="font-mono text-[10px] tracking-[0.3em] text-textMuted">
-        LOADING GPU MODEL…
-      </span>
-    </div>
-  ),
-});
-
-const badges = [
-  { label: "CUDA_STREAM_ACTIVE", tone: "green" as const },
-  { label: "GPU_ARCHITECTURE", tone: "cyan" as const },
-  { label: "HPC_WORKSHOPS", tone: "green" as const },
-  { label: "AI_INFRASTRUCTURE", tone: "cyan" as const },
-  { label: "STUDENT_RESEARCH", tone: "green" as const },
+const tickerTerms = [
+  "CUDA_STREAM_ACTIVE",
+  "GPU_ARCHITECTURE",
+  "HPC_WORKSHOPS",
+  "AI_INFRASTRUCTURE",
+  "STUDENT_RESEARCH",
 ];
 
 const container = {
@@ -40,25 +27,17 @@ const item = {
   },
 };
 
+/**
+ * The hero no longer carries its own 3D canvas — the 4090 render is the
+ * shared page-level layer from ScrollGpuScene, which starts lying flat
+ * behind this section and turns as the page scrolls. This section is just
+ * the centered title card sitting on top of it.
+ */
 export default function Hero() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end start"],
-  });
-
-  // As the hero scrolls out of view, the card parallaxes up, drifts right,
-  // and fades — so it hands off to the next section instead of hard-clipping.
-  const modelY = useTransform(scrollYProgress, [0, 1], [0, -120]);
-  const modelX = useTransform(scrollYProgress, [0, 1], [0, 60]);
-  const modelOpacity = useTransform(scrollYProgress, [0, 0.75, 1], [1, 0.4, 0]);
-  const modelScale = useTransform(scrollYProgress, [0, 1], [1, 1.08]);
-
   return (
     <section
-      ref={sectionRef}
       id="home"
-      className="relative min-h-screen overflow-hidden pt-16"
+      className="relative flex min-h-screen flex-col pt-16"
       aria-label="Introduction"
     >
       <AnimatedGrid />
@@ -67,64 +46,67 @@ export default function Hero() {
         className="pointer-events-none absolute inset-0 bg-hero-radial"
       />
 
-      {/* Ambient background render of the 4090 — sits behind the copy, faded
-          out on the left so the text stays legible, and parallaxes/fades as
-          the hero scrolls away. */}
-      <motion.div
-        aria-hidden
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1.4, delay: 0.2, ease: "easeOut" }}
-        className="pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_right,transparent,black_36%)] lg:[mask-image:linear-gradient(to_right,transparent,black_30%)]"
-      >
-        <motion.div
-          style={{ y: modelY, x: modelX, opacity: modelOpacity, scale: modelScale }}
-          className="h-full w-full"
-        >
-          <GpuModel className="h-full w-full" offsetX={2.1} />
-        </motion.div>
-      </motion.div>
+      {/* terminal chrome, top-left — reinforces the render-pipeline conceit */}
+      <div className="absolute left-4 top-20 z-10 hidden w-64 rounded-md border border-line bg-obsidian/60 backdrop-blur-sm sm:block lg:left-8">
+        <TerminalTitlebar label="gpu_render.sh" />
+        <p className="px-4 py-2 font-mono text-[10px] tracking-[0.18em] text-textSecondary">
+          RTX_4090.GLB <span className="text-mint">[LOADED]</span>
+        </p>
+      </div>
 
-      <div className="relative mx-auto grid max-w-site items-center gap-8 px-4 pb-16 pt-14 sm:px-6 md:pt-20 lg:min-h-[calc(100vh-4rem)] lg:px-10 lg:pb-0 lg:pt-0">
-        {/* Copy */}
+      {/* live-render badge, top-right */}
+      <span className="absolute right-4 top-20 z-10 hidden items-center gap-1.5 font-mono text-[10px] tracking-[0.24em] text-gpu lg:right-8 lg:flex">
+        <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-gpu" />
+        RENDERING LIVE
+      </span>
+
+      {/* Copy — dead center, the way a title card sits over a hero visual */}
+      <div className="relative z-10 flex flex-1 flex-col items-center justify-center px-4 text-center sm:px-6">
+        {/* soft spotlight so the type reads clean against whatever the card is doing behind it */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_60%_55%_at_50%_50%,rgba(3,6,4,0.55),transparent_70%)]"
+        />
+
         <motion.div
           variants={container}
           initial="hidden"
           animate="visible"
-          className="relative z-10 max-w-2xl"
+          className="flex max-w-3xl flex-col items-center"
         >
           <motion.p
             variants={item}
-            className="mb-6 font-mono text-[11px] tracking-[0.3em] text-gpu"
+            className="mb-5 font-mono text-[11px] tracking-[0.3em] text-gpu"
           >
             /// UNIVERSITY OF HOUSTON PARALLEL COMPUTING SOCIETY
           </motion.p>
 
           <motion.h1
             variants={item}
-            className="font-display text-4xl font-bold uppercase leading-[1.02] tracking-tight sm:text-5xl md:text-6xl xl:text-7xl"
+            className="font-hero uppercase leading-[0.95] tracking-tight text-textPrimary"
           >
-            <span className="block text-textPrimary">The Future of</span>
-            <span className="headline-gradient glow-text block">
+            <span className="block text-3xl font-bold sm:text-4xl md:text-5xl">
+              The Future of
+            </span>
+            <span className="headline-gradient glow-text block text-6xl font-black sm:text-7xl md:text-8xl xl:text-[8rem]">
               Computing
             </span>
-            <span className="block text-textPrimary">
-              is Parallel<span className="text-gpu">.</span>
+            <span className="block text-3xl font-bold sm:text-4xl md:text-5xl">
+              Is Parallel<span className="text-gpu">.</span>
             </span>
           </motion.h1>
 
           <motion.p
             variants={item}
-            className="mt-6 max-w-xl text-base leading-relaxed text-textSecondary md:text-lg"
+            className="mt-6 max-w-lg text-sm leading-relaxed text-textSecondary md:text-base"
           >
-            UH PCS helps students learn the compute stack behind modern AI,
-            simulation, graphics, and data-intensive systems through workshops,
-            projects, recruiter events, and hands-on engineering.
+            The compute stack behind modern AI and graphics — taught through
+            workshops, projects, and hands-on engineering.
           </motion.p>
 
           <motion.div
             variants={item}
-            className="mt-8 flex flex-wrap items-center gap-3"
+            className="mt-8 flex flex-wrap items-center justify-center gap-5"
           >
             <a
               href="#join"
@@ -138,45 +120,30 @@ export default function Hero() {
             </a>
             <a
               href="#projects"
-              className="inline-flex items-center gap-2 rounded-md border border-line bg-panel px-5 py-3 font-mono text-xs uppercase tracking-[0.16em] text-textPrimary backdrop-blur-md transition-all hover:border-lineActive hover:text-mint"
+              className="font-mono text-xs uppercase tracking-[0.18em] text-textSecondary transition-colors hover:text-holo"
             >
-              Explore Projects
+              Explore the systems →
             </a>
-            <a
-              href="#events"
-              className="group inline-flex items-center gap-1 px-2 py-3 font-mono text-xs uppercase tracking-[0.16em] text-textSecondary transition-colors hover:text-holo"
-            >
-              View Upcoming Events
-              <ChevronRight
-                className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5"
-                aria-hidden
-              />
-            </a>
-          </motion.div>
-
-          <motion.div variants={item} className="mt-10 flex flex-wrap gap-2">
-            {badges.map((b) => (
-              <StatusBadge key={b.label} label={`[${b.label}]`} tone={b.tone} />
-            ))}
           </motion.div>
         </motion.div>
       </div>
 
-      {/* floating HUD labels over the ambient render */}
-      <span className="pointer-events-none absolute bottom-24 right-4 z-10 hidden font-mono text-[10px] tracking-[0.24em] text-textMuted lg:block lg:right-8">
-        THREADS: 1024 · WARPS: 32
-      </span>
-      <span className="pointer-events-none absolute right-4 top-20 z-10 hidden items-center gap-1.5 font-mono text-[10px] tracking-[0.24em] text-gpu lg:right-8 lg:flex">
-        <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-gpu" />
-        RENDERING LIVE
-      </span>
-
-      {/* scroll cue */}
-      <div className="pointer-events-none absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 lg:flex">
-        <span className="font-mono text-[9px] tracking-[0.3em] text-textMuted">
-          SCROLL
-        </span>
-        <span className="h-8 w-px animate-pulse bg-gradient-to-b from-gpu to-transparent" />
+      {/* capability ticker — terminal-marquee strip along the bottom edge */}
+      <div
+        className="relative z-10 overflow-hidden border-t border-line bg-obsidian/70 py-2.5 backdrop-blur-sm"
+        aria-hidden
+      >
+        <div className="flex w-max animate-marquee gap-8 whitespace-nowrap">
+          {[...tickerTerms, ...tickerTerms].map((term, i) => (
+            <span
+              key={`${term}-${i}`}
+              className="flex items-center gap-8 font-mono text-[10px] tracking-[0.28em] text-textMuted"
+            >
+              [{term}]
+              <span className="text-gpu/60">//</span>
+            </span>
+          ))}
+        </div>
       </div>
     </section>
   );
