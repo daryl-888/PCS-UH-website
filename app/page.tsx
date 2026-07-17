@@ -8,10 +8,11 @@ import Offerings from "@/components/Offerings";
 import GitHubRepoPanel from "@/components/GitHubRepoPanel";
 import FinalCTA from "@/components/FinalCTA";
 import Footer from "@/components/Footer";
+import { ScrollProgressProvider } from "@/lib/scroll-context";
 
 export default function Page() {
   return (
-    <>
+    <ScrollProgressProvider>
       <BootSequence />
       <ScrollGpuScene />
       <Scanlines />
@@ -24,6 +25,6 @@ export default function Page() {
         <FinalCTA />
       </main>
       <Footer />
-    </>
+    </ScrollProgressProvider>
   );
 }

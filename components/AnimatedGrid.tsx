@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useMotionValue, useTransform } from "framer-motion";
+import { useSharedScrollProgress } from "@/lib/scroll-context";
 import { cn } from "@/lib/utils";
 
 type AnimatedGridProps = {
@@ -23,7 +24,12 @@ export default function AnimatedGrid({
   masked = true,
   depthShift = false,
 }: AnimatedGridProps) {
-  const { scrollYProgress } = useScroll();
+  // Reads the page's shared scroll value (from ScrollProgressProvider)
+  // instead of starting a second independent scroll listener; falls back
+  // to a static value so this component still works standalone/unwrapped.
+  const shared = useSharedScrollProgress();
+  const fallback = useMotionValue(0);
+  const scrollYProgress = shared ?? fallback;
   const scale = useTransform(scrollYProgress, [0, 1], [1, 1.4]);
   const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.6, 0.3]);
 

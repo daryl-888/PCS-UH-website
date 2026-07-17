@@ -3,9 +3,8 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { GitBranch, ArrowUpRight, Star, GitFork } from "lucide-react";
-import SectionLabel from "@/components/SectionLabel";
-import GlassCard from "@/components/GlassCard";
-import TerminalTitlebar from "@/components/TerminalTitlebar";
+import DecodeText from "@/components/DecodeText";
+import TerminalCard from "@/components/TerminalCard";
 import StatusBadge from "@/components/StatusBadge";
 import Reveal from "@/components/Reveal";
 import { projects, type Project } from "@/data/projects";
@@ -30,35 +29,48 @@ export default function GitHubRepoPanel() {
   return (
     <section
       id="github"
-      className="relative border-t border-line py-28 md:py-40"
+      className="relative border-t border-line py-28 md:py-40 lg:py-52"
       aria-label="GitHub repositories"
     >
-      <div className="mx-auto max-w-site px-4 sm:px-6 lg:px-10">
+      {/* Narrower + centered than the other sections — deliberately leaves
+          open margins left and right so the GPU (now well zoomed-out at
+          this scroll stop) frames the terminal window instead of hiding
+          behind it. */}
+      <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-10">
         <Reveal>
-          <SectionLabel
-            code="SEC.03 // SOURCE_CONTROL"
-            title="Open Repositories. Real Systems."
-            subtitle="PCS projects are built to be studied, forked, improved, and shown. Our GitHub is the technical portfolio of the organization."
-          />
+          <div className="mb-3 flex items-center justify-center gap-3">
+            <span className="h-px w-8 bg-lineActive" aria-hidden />
+            <span className="font-mono text-[11px] tracking-[0.28em] text-gpu">
+              SEC.03 // SOURCE_CONTROL
+            </span>
+            <span className="h-px w-8 bg-lineActive" aria-hidden />
+          </div>
+          <h2 className="font-display text-3xl font-bold uppercase tracking-tight text-textPrimary sm:text-4xl md:text-5xl">
+            <DecodeText text="Open Repositories. Real Systems." />
+          </h2>
+          <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-textSecondary">
+            PCS projects are built to be studied, forked, improved, and
+            shown. Our GitHub is the technical portfolio of the
+            organization.
+          </p>
         </Reveal>
 
         {/* Repo Terminal Transition — the panel unmasks top-down like a terminal window opening */}
         <motion.div
+          className="mt-12 text-left"
           initial={{ clipPath: "inset(0% 0% 100% 0%)", opacity: 0 }}
           whileInView={{ clipPath: "inset(0% 0% 0% 0%)", opacity: 1 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.8, ease: [0.21, 0.65, 0.36, 1] }}
         >
-          <GlassCard className="overflow-hidden p-0" corners>
-            <TerminalTitlebar label="uh-pcs@github:~$ ls repositories/ --featured" />
-
+          <TerminalCard label="uh-pcs@github:~$ ls repositories/ --featured">
             <ul className="divide-y divide-line">
               {featured.map((project) => {
                 const stats = fakeStats(project.id);
                 return (
                   <li
                     key={project.id}
-                    className="flex flex-col gap-4 p-5 transition-colors hover:bg-panelHigh sm:flex-row sm:items-center sm:justify-between sm:p-6"
+                    className="flex flex-col gap-4 p-5 transition-colors hover:bg-white/[0.03] sm:flex-row sm:items-center sm:justify-between sm:p-6"
                   >
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-3">
@@ -82,7 +94,7 @@ export default function GitHubRepoPanel() {
                         {project.stack.map((tech) => (
                           <span
                             key={tech}
-                            className="rounded-sm border border-line bg-graphite px-2 py-0.5 font-mono text-[10px] tracking-[0.08em] text-textSecondary"
+                            className="rounded-sm border border-line bg-black px-2 py-0.5 font-mono text-[10px] tracking-[0.08em] text-textSecondary"
                           >
                             {tech}
                           </span>
@@ -137,7 +149,7 @@ export default function GitHubRepoPanel() {
                 </Link>
               </div>
             </div>
-          </GlassCard>
+          </TerminalCard>
         </motion.div>
       </div>
     </section>
