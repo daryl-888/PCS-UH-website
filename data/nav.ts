@@ -6,14 +6,21 @@ export type NavLink = {
 };
 
 export const navLinks: NavLink[] = [
-  { label: "Home", href: "#home", cmd: "00" },
-  { label: "Mission", href: "#mission", cmd: "01" },
-  { label: "Workshops", href: "#workshops", cmd: "02" },
-  { label: "Projects", href: "#projects", cmd: "03" },
-  { label: "Events", href: "#events", cmd: "04" },
-  { label: "Officers", href: "#officers", cmd: "05" },
-  { label: "Sponsors", href: "#sponsors", cmd: "06" },
-  { label: "Join", href: "#join", cmd: "07" },
+  { label: "Home", href: "/", cmd: "00" },
+  { label: "About", href: "/about", cmd: "01" },
+  { label: "Events", href: "/events", cmd: "02" },
+  { label: "Projects", href: "/projects", cmd: "03" },
+  { label: "Membership", href: "/membership", cmd: "04" },
+  { label: "Contact", href: "/contact", cmd: "05" },
+];
+
+/** Landing-page-only in-page anchors, used for the scroll-spy on `/`. */
+export const landingSections = [
+  { id: "home", label: "Home" },
+  { id: "mission", label: "Mission" },
+  { id: "offer", label: "Offer" },
+  { id: "github", label: "GitHub" },
+  { id: "join", label: "Join" },
 ];
 
 export const GITHUB_URL = "https://github.com/uh-pcs"; // TODO: replace with real org URL

@@ -1,10 +1,18 @@
 "use client";
 
+import Link from "next/link";
 import { CalendarDays, Clock3, MapPin } from "lucide-react";
 import SectionLabel from "@/components/SectionLabel";
 import GlassCard from "@/components/GlassCard";
 import Reveal from "@/components/Reveal";
-import { events } from "@/data/events";
+import StatusBadge from "@/components/StatusBadge";
+import { events, type PcsEvent } from "@/data/events";
+
+const levelTone: Record<PcsEvent["level"], "green" | "cyan" | "amber"> = {
+  Beginner: "green",
+  Intermediate: "amber",
+  "All Levels": "cyan",
+};
 
 export default function Events() {
   return (
@@ -41,9 +49,16 @@ export default function Events() {
                       <p className="font-mono text-[10px] tracking-[0.22em] text-textMuted">
                         {event.id} // QUEUED
                       </p>
-                      <h3 className="mt-1 font-display text-lg font-bold text-textPrimary sm:text-xl">
-                        {event.title}
-                      </h3>
+                      <div className="mt-1 flex flex-wrap items-center gap-2.5">
+                        <h3 className="font-display text-lg font-bold text-textPrimary sm:text-xl">
+                          {event.title}
+                        </h3>
+                        <StatusBadge
+                          label={event.level}
+                          tone={levelTone[event.level]}
+                          pulse={false}
+                        />
+                      </div>
                       <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-textSecondary">
                         <span className="inline-flex items-center gap-1.5">
                           <CalendarDays className="h-3.5 w-3.5 text-gpu" aria-hidden />
@@ -69,12 +84,12 @@ export default function Events() {
                         ))}
                       </div>
                     </div>
-                    <a
-                      href="#join"
+                    <Link
+                      href="/membership"
                       className="shrink-0 rounded-md border border-lineActive bg-gpu/12 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-mint transition-all hover:bg-gpu/25 hover:shadow-glow"
                     >
                       RSVP
-                    </a>
+                    </Link>
                   </div>
                 </GlassCard>
               </div>

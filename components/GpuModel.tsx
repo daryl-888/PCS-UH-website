@@ -6,20 +6,19 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Float, useGLTF } from "@react-three/drei";
 import { type MotionValue, useMotionValueEvent, useTransform } from "framer-motion";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
-import { usePrefersReducedMotion, useIsMobile } from "@/lib/hooks";
+import { usePrefersReducedMotion, useIsMobile, useTabVisible } from "@/lib/hooks";
 
 const MODEL_URL = "/models/geforce_rtx_4090_founders_edition.glb";
 const PCS_GREEN = new THREE.Color("#00E676");
 
-// One pose per top-level section (home, mission, workshops, projects,
-// events, officers, sponsors, join) — the card starts lying horizontal
-// at the top of the page and turns to a new angle as each section scrolls
-// into view, so the render reads as one continuous piece choreographed to
-// the whole page rather than a hero-only prop.
-const SCROLL_STOPS = [0, 1 / 7, 2 / 7, 3 / 7, 4 / 7, 5 / 7, 6 / 7, 1];
-const POSE_Y = [-0.15, 0.55, -0.6, 1.2, -1.1, 1.65, -1.4, 2.1];
-const POSE_Z = [1.5, 0.95, 0.4, 0.1, 0, -0.08, 0.05, 0.15];
-const POSE_X = [0.05, 0.12, -0.05, 0.16, 0, 0.1, -0.05, 0.08];
+// One pose per landing-page section (hero, mission, offer, github, join) —
+// the card starts lying horizontal in the hero and turns to a new angle as
+// each section scrolls into view, so the render reads as one continuous
+// piece choreographed to the whole (now 5-section) page.
+const SCROLL_STOPS = [0, 1 / 4, 2 / 4, 3 / 4, 1];
+const POSE_Y = [-0.15, 0.6, -0.55, 1.1, 1.6];
+const POSE_Z = [1.5, 0.85, 0.3, 0.05, 0.1];
+const POSE_X = [0.05, 0.12, -0.05, 0.14, 0.08];
 
 /**
  * Generates studio reflections locally (no network HDR needed) so the
@@ -135,6 +134,7 @@ export default function GpuModel({
 }) {
   const reduced = usePrefersReducedMotion();
   const mobile = useIsMobile();
+  const tabVisible = useTabVisible();
 
   return (
     <div className={className}>
@@ -142,7 +142,7 @@ export default function GpuModel({
         dpr={[1, mobile ? 1.5 : 2]}
         camera={{ position: [0, 0.3, 300], fov: 32 }}
         gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
-        frameloop={reduced ? "demand" : "always"}
+        frameloop={reduced || !tabVisible ? "demand" : "always"}
       >
         <StudioEnvironment />
         {/* hard grazing rim from upper-back — traces a bright specular

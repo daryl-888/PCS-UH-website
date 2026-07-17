@@ -31,3 +31,17 @@ export function usePrefersReducedMotion() {
 
   return reduced;
 }
+
+/** True when the browser tab is the active/visible one. Used to pause WebGL rendering in background tabs. */
+export function useTabVisible() {
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const update = () => setVisible(document.visibilityState === "visible");
+    update();
+    document.addEventListener("visibilitychange", update);
+    return () => document.removeEventListener("visibilitychange", update);
+  }, []);
+
+  return visible;
+}

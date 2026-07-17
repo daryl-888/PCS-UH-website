@@ -1,3 +1,6 @@
+"use client";
+
+import { motion, useScroll, useTransform } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 type AnimatedGridProps = {
@@ -8,6 +11,8 @@ type AnimatedGridProps = {
   animate?: boolean;
   /** fade the grid out towards the edges */
   masked?: boolean;
+  /** ties grid scale/opacity to page scroll — a subtle sense of depth as sections pass (Grid Depth Shift) */
+  depthShift?: boolean;
 };
 
 /** Compute-node grid overlay. Purely decorative. */
@@ -16,9 +21,14 @@ export default function AnimatedGrid({
   size = 48,
   animate = true,
   masked = true,
+  depthShift = false,
 }: AnimatedGridProps) {
+  const { scrollYProgress } = useScroll();
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.4]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.6, 0.3]);
+
   return (
-    <div
+    <motion.div
       aria-hidden
       className={cn(
         "pointer-events-none absolute inset-0 bg-node-grid",
@@ -27,6 +37,7 @@ export default function AnimatedGrid({
       )}
       style={{
         backgroundSize: `${size}px ${size}px`,
+        ...(depthShift ? { scale, opacity } : {}),
         ...(masked
           ? {
               maskImage:

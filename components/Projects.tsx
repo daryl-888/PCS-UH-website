@@ -16,6 +16,12 @@ const statusTone: Record<Project["status"], "green" | "cyan" | "amber"> = {
   Prototype: "amber",
 };
 
+const difficultyTone: Record<Project["difficulty"], "green" | "cyan" | "amber"> = {
+  Beginner: "green",
+  Intermediate: "cyan",
+  Advanced: "amber",
+};
+
 /** CSS/SVG generated thumbnail — no image assets needed. */
 function ProjectVisual({ visual }: { visual: Project["visual"] }) {
   return (
@@ -113,9 +119,9 @@ export default function Projects() {
       <div className="mx-auto max-w-site px-4 sm:px-6 lg:px-10">
         <Reveal>
           <SectionLabel
-            code="SEC.03 // SYSTEM_OUTPUTS"
-            title="System Outputs"
-            subtitle="Projects built by members to understand parallel systems from the hardware up."
+            code="PROJECTS // SYSTEM_OUTPUTS"
+            title="Project Gallery"
+            subtitle="Everything members have built to understand parallel systems from the hardware up."
           />
         </Reveal>
 
@@ -135,11 +141,18 @@ export default function Projects() {
                         {project.name}
                       </h3>
                     </div>
-                    <StatusBadge
-                      label={project.status}
-                      tone={statusTone[project.status]}
-                      pulse={project.status !== "Deployed"}
-                    />
+                    <div className="flex shrink-0 flex-col items-end gap-1.5">
+                      <StatusBadge
+                        label={project.status}
+                        tone={statusTone[project.status]}
+                        pulse={project.status !== "Deployed"}
+                      />
+                      <StatusBadge
+                        label={project.difficulty}
+                        tone={difficultyTone[project.difficulty]}
+                        pulse={false}
+                      />
+                    </div>
                   </div>
 
                   <p className="mt-2 text-sm leading-relaxed text-textSecondary">

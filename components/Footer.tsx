@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   Github,
   Linkedin,
@@ -76,13 +77,13 @@ export default function Footer() {
           <ul className="grid grid-cols-2 gap-x-4 gap-y-2.5">
             {navLinks.map((link) => (
               <li key={link.href}>
-                <a
+                <Link
                   href={link.href}
                   className="font-mono text-xs text-textSecondary transition-colors hover:text-mint"
                 >
                   <span className="mr-1.5 text-gpu/70">›</span>
                   {link.label}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>

@@ -5,6 +5,7 @@ export type PcsEvent = {
   time: string;
   location: string;
   tags: string[];
+  level: "Beginner" | "Intermediate" | "All Levels";
 };
 
 // TODO: update dates/times/rooms each semester.
@@ -15,7 +16,8 @@ export const events: PcsEvent[] = [
     date: "TBA — Fall Semester",
     time: "6:00 PM",
     location: "PGH — Room TBA",
-    tags: ["CUDA", "Beginner", "Hands-on"],
+    tags: ["CUDA", "Hands-on"],
+    level: "Beginner",
   },
   {
     id: "EVT-02",
@@ -24,6 +26,7 @@ export const events: PcsEvent[] = [
     time: "6:00 PM",
     location: "PGH — Room TBA",
     tags: ["Architecture", "Lecture"],
+    level: "Beginner",
   },
   {
     id: "EVT-03",
@@ -32,6 +35,7 @@ export const events: PcsEvent[] = [
     time: "6:00 PM",
     location: "PGH — Room TBA",
     tags: ["CUDA", "Lab", "Optimization"],
+    level: "Intermediate",
   },
   {
     id: "EVT-04",
@@ -40,6 +44,7 @@ export const events: PcsEvent[] = [
     time: "6:30 PM",
     location: "Student Center — Room TBA",
     tags: ["Industry", "Recruiting", "Networking"],
+    level: "All Levels",
   },
   {
     id: "EVT-05",
@@ -47,7 +52,8 @@ export const events: PcsEvent[] = [
     date: "TBA — Fall Semester",
     time: "6:00 PM",
     location: "PGH — Room TBA",
-    tags: ["Profiling", "Tools", "Intermediate"],
+    tags: ["Profiling", "Tools"],
+    level: "Intermediate",
   },
   {
     id: "EVT-06",
@@ -56,5 +62,6 @@ export const events: PcsEvent[] = [
     time: "6:30 PM",
     location: "Student Center — Room TBA",
     tags: ["Careers", "AI Infra", "Panel"],
+    level: "All Levels",
   },
 ];

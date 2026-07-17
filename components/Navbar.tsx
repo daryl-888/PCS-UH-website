@@ -1,15 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Cpu, Github, Menu, X, ChevronRight } from "lucide-react";
 import { navLinks, GITHUB_URL } from "@/data/nav";
 import { cn } from "@/lib/utils";
 
 export default function Navbar() {
+  const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState("home");
 
   // Navbar opacity increases once the page scrolls.
   useEffect(() => {
@@ -19,24 +21,6 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Track which section is in view for the glowing active indicator.
-  useEffect(() => {
-    const ids = navLinks.map((l) => l.href.slice(1));
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) setActiveSection(entry.target.id);
-        }
-      },
-      { rootMargin: "-40% 0px -55% 0px" }
-    );
-    ids.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    });
-    return () => observer.disconnect();
-  }, []);
-
   // Lock body scroll while the command palette is open.
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -44,6 +28,11 @@ export default function Navbar() {
       document.body.style.overflow = "";
     };
   }, [open]);
+
+  // Close the mobile menu on route change.
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
 
   return (
     <>
@@ -58,7 +47,7 @@ export default function Navbar() {
           aria-label="Primary"
         >
           {/* Left: identity */}
-          <a href="#home" className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-3">
             <span className="grid h-8 w-8 place-items-center rounded-md border border-lineActive bg-panel text-gpu shadow-glow">
               <Cpu className="h-4 w-4" aria-hidden />
             </span>
@@ -69,15 +58,16 @@ export default function Navbar() {
               <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-gpu" />
               [SYSTEM.ONLINE]
             </span>
-          </a>
+          </Link>
 
           {/* Center: links */}
           <ul className="hidden items-center gap-1 lg:flex">
             {navLinks.map((link) => {
-              const isActive = activeSection === link.href.slice(1);
+              const isActive =
+                link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
               return (
                 <li key={link.href}>
-                  <a
+                  <Link
                     href={link.href}
                     className={cn(
                       "relative rounded-sm px-3 py-2 font-mono text-[11px] uppercase tracking-[0.16em] transition-colors",
@@ -94,7 +84,7 @@ export default function Navbar() {
                         transition={{ type: "spring", stiffness: 350, damping: 30 }}
                       />
                     )}
-                  </a>
+                  </Link>
                 </li>
               );
             })}
@@ -111,12 +101,12 @@ export default function Navbar() {
             >
               <Github className="h-4 w-4" aria-hidden />
             </a>
-            <a
-              href="#join"
+            <Link
+              href="/membership"
               className="hidden rounded-md border border-lineActive bg-gpu/15 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.16em] text-mint transition-all hover:bg-gpu/25 hover:shadow-glow sm:block"
             >
               Become a Member
-            </a>
+            </Link>
             <button
               type="button"
               onClick={() => setOpen(true)}
@@ -165,7 +155,7 @@ export default function Navbar() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.05 + i * 0.045 }}
                   >
-                    <a
+                    <Link
                       href={link.href}
                       onClick={() => setOpen(false)}
                       className="group flex items-center justify-between rounded-md border border-transparent px-4 py-4 transition-colors hover:border-line hover:bg-panel"
@@ -182,19 +172,19 @@ export default function Navbar() {
                         className="h-4 w-4 text-textMuted group-hover:text-gpu"
                         aria-hidden
                       />
-                    </a>
+                    </Link>
                   </motion.li>
                 ))}
               </ul>
             </nav>
             <div className="border-t border-line px-6 py-5">
-              <a
-                href="#join"
+              <Link
+                href="/membership"
                 onClick={() => setOpen(false)}
                 className="block rounded-md border border-lineActive bg-gpu/15 px-4 py-3 text-center font-mono text-xs uppercase tracking-[0.2em] text-mint"
               >
                 Become a Member
-              </a>
+              </Link>
             </div>
           </motion.div>
         )}
