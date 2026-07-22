@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Cpu, Github, Menu, X, ChevronRight } from "lucide-react";
-import { navLinks, GITHUB_URL } from "@/data/nav";
+import { navLinks, GITHUB_URL, MEMBERSHIP_FORM_URL } from "@/data/nav";
 import { cn } from "@/lib/utils";
 
 export default function Navbar() {
@@ -101,12 +101,14 @@ export default function Navbar() {
             >
               <Github className="h-4 w-4" aria-hidden />
             </a>
-            <Link
-              href="/membership"
+            <a
+              href={MEMBERSHIP_FORM_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="hidden rounded-md border border-lineActive bg-gpu/15 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.16em] text-mint transition-all hover:bg-gpu/25 hover:shadow-glow sm:block"
             >
               Become a Member
-            </Link>
+            </a>
             <button
               type="button"
               onClick={() => setOpen(true)}
@@ -178,13 +180,15 @@ export default function Navbar() {
               </ul>
             </nav>
             <div className="border-t border-line px-6 py-5">
-              <Link
-                href="/membership"
+              <a
+                href={MEMBERSHIP_FORM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 onClick={() => setOpen(false)}
                 className="block rounded-md border border-lineActive bg-gpu/15 px-4 py-3 text-center font-mono text-xs uppercase tracking-[0.2em] text-mint"
               >
                 Become a Member
-              </Link>
+              </a>
             </div>
           </motion.div>
         )}

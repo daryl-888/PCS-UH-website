@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { CalendarDays, Clock3, MapPin } from "lucide-react";
 import SectionLabel from "@/components/SectionLabel";
-import GlassCard from "@/components/GlassCard";
+import TerminalCard from "@/components/TerminalCard";
 import Reveal from "@/components/Reveal";
 import StatusBadge from "@/components/StatusBadge";
 import { events, type PcsEvent } from "@/data/events";
@@ -43,7 +43,11 @@ export default function Events() {
                   <span className="h-1.5 w-1.5 rounded-full bg-gpu" />
                 </span>
 
-                <GlassCard className="p-5 sm:p-6" beam>
+                <TerminalCard
+                  label={`pcs://events/${event.id.toLowerCase()}`}
+                  contentClassName="p-5 sm:p-6"
+                  beam
+                >
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div>
                       <p className="font-mono text-[10px] tracking-[0.22em] text-textMuted">
@@ -91,7 +95,7 @@ export default function Events() {
                       RSVP
                     </Link>
                   </div>
-                </GlassCard>
+                </TerminalCard>
               </div>
             </Reveal>
           ))}

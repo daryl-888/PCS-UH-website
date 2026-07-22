@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import CountUp from "@/components/CountUp";
-import GlassCard from "@/components/GlassCard";
+import TerminalCard from "@/components/TerminalCard";
 import TerminalLog from "@/components/TerminalLog";
 import { telemetryStats, terminalLines, marqueeTerms } from "@/data/telemetry";
 
@@ -40,10 +40,12 @@ export default function TelemetryStrip() {
                 transition={{ delay: i * 0.07, duration: 0.5 }}
                 className={i === 4 ? "col-span-2 sm:col-span-1" : ""}
               >
-                <GlassCard className="flex h-full flex-col justify-between gap-3 p-4" beam>
-                  <p className="font-mono text-[9px] tracking-[0.22em] text-textMuted">
-                    {stat.label}
-                  </p>
+                <TerminalCard
+                  label={stat.label}
+                  className="h-full"
+                  contentClassName="flex flex-col justify-center p-4"
+                  beam
+                >
                   <p className="font-display text-lg font-bold leading-snug text-mint">
                     {typeof stat.count === "number" ? (
                       <CountUp to={stat.count} suffix={stat.suffix} />
@@ -53,7 +55,7 @@ export default function TelemetryStrip() {
                       </span>
                     )}
                   </p>
-                </GlassCard>
+                </TerminalCard>
               </motion.div>
             ))}
           </div>

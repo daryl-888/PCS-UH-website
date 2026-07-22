@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Check } from "lucide-react";
 import SiteChrome from "@/components/SiteChrome";
-import GlassCard from "@/components/GlassCard";
+import TerminalCard from "@/components/TerminalCard";
 import Reveal from "@/components/Reveal";
 import Join from "@/components/Join";
 import { CONTACT_EMAIL } from "@/data/nav";
@@ -49,8 +49,10 @@ export default function MembershipPage() {
       >
         <div className="mx-auto max-w-site px-4 sm:px-6 lg:px-10">
           <Reveal>
-            <GlassCard
-              className="mx-auto max-w-2xl p-8 text-center sm:p-12"
+            <TerminalCard
+              label="PRICING.TXT"
+              className="mx-auto max-w-2xl"
+              contentClassName="p-8 text-center sm:p-12"
               corners
               beam
             >
@@ -87,7 +89,7 @@ export default function MembershipPage() {
               >
                 Questions? Contact PCS →
               </a>
-            </GlassCard>
+            </TerminalCard>
           </Reveal>
         </div>
       </section>

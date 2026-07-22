@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import SiteChrome from "@/components/SiteChrome";
-import GlassCard from "@/components/GlassCard";
+import TerminalCard from "@/components/TerminalCard";
 import Reveal from "@/components/Reveal";
 import Officers from "@/components/Officers";
 
@@ -39,7 +39,12 @@ export default function AboutPage() {
       >
         <div className="mx-auto grid max-w-site gap-6 px-4 sm:px-6 md:grid-cols-2 lg:px-10">
           <Reveal>
-            <GlassCard className="h-full p-7 sm:p-8" corners>
+            <TerminalCard
+              label="pcs://about/why_it_matters"
+              className="h-full"
+              contentClassName="p-7 sm:p-8"
+              corners
+            >
               <p className="font-mono text-[10px] tracking-[0.24em] text-gpu">
                 WHY_IT_MATTERS
               </p>
@@ -48,10 +53,15 @@ export default function AboutPage() {
                 on parallel computation. Most CS/ECE curricula don&apos;t
                 teach it — we do.
               </p>
-            </GlassCard>
+            </TerminalCard>
           </Reveal>
           <Reveal delay={0.1}>
-            <GlassCard className="h-full p-7 sm:p-8" corners>
+            <TerminalCard
+              label="pcs://about/who_can_join"
+              className="h-full"
+              contentClassName="p-7 sm:p-8"
+              corners
+            >
               <p className="font-mono text-[10px] tracking-[0.24em] text-gpu">
                 WHO_CAN_JOIN
               </p>
@@ -59,7 +69,7 @@ export default function AboutPage() {
                 Any UH student, any major, any year. No CUDA or GPU
                 experience required — curiosity is the only prerequisite.
               </p>
-            </GlassCard>
+            </TerminalCard>
           </Reveal>
         </div>
       </section>

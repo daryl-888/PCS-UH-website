@@ -8,7 +8,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import SiteChrome from "@/components/SiteChrome";
-import GlassCard from "@/components/GlassCard";
+import TerminalCard from "@/components/TerminalCard";
 import Reveal from "@/components/Reveal";
 import { CONTACT_EMAIL } from "@/data/nav";
 
@@ -89,7 +89,13 @@ export default function ContactPage() {
           <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {TRACKS.map((track, i) => (
               <Reveal key={track.label} delay={(i % 3) * 0.08} as="li">
-                <GlassCard className="flex h-full flex-col p-6" corners beam>
+                <TerminalCard
+                  label={`pcs://contact/${track.label.toLowerCase().replace(/\s+/g, "_")}`}
+                  className="h-full"
+                  contentClassName="flex h-full flex-col p-6"
+                  corners
+                  beam
+                >
                   <span className="grid h-11 w-11 place-items-center rounded-md border border-line bg-graphite text-gpu">
                     <track.icon className="h-5 w-5" aria-hidden />
                   </span>
@@ -107,7 +113,7 @@ export default function ContactPage() {
                   >
                     Email us →
                   </a>
-                </GlassCard>
+                </TerminalCard>
               </Reveal>
             ))}
           </ul>

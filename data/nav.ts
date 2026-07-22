@@ -11,7 +11,7 @@ export const navLinks: NavLink[] = [
   { label: "Events", href: "/events", cmd: "02" },
   { label: "Projects", href: "/projects", cmd: "03" },
   { label: "Membership", href: "/membership", cmd: "04" },
-  { label: "Contact", href: "/contact", cmd: "05" },
+  { label: "Sponsor", href: "/sponsor", cmd: "05" },
 ];
 
 /** Landing-page-only in-page anchors, used for the scroll-spy on `/`. */
@@ -24,7 +24,8 @@ export const landingSections = [
 ];
 
 export const GITHUB_URL = "https://github.com/uh-pcs"; // TODO: replace with real org URL
+export const MEMBERSHIP_FORM_URL = "https://forms.gle/pUnpEViWWytWnwxQA";
 export const DISCORD_URL = "#"; // TODO: replace with Discord invite
 export const LINKEDIN_URL = "#"; // TODO: replace with LinkedIn page
 export const INSTAGRAM_URL = "#"; // TODO: replace with Instagram
-export const CONTACT_EMAIL = "uhpcs@uh.edu"; // TODO: replace with real inbox
+export const CONTACT_EMAIL = "contact@uh-pcs.org";

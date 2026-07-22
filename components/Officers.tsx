@@ -2,7 +2,7 @@
 
 import { AtSign } from "lucide-react";
 import SectionLabel from "@/components/SectionLabel";
-import GlassCard from "@/components/GlassCard";
+import TerminalCard from "@/components/TerminalCard";
 import Reveal from "@/components/Reveal";
 import { officers } from "@/data/officers";
 
@@ -68,7 +68,12 @@ export default function Officers() {
         <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {officers.map((officer, i) => (
             <Reveal key={officer.id} delay={(i % 3) * 0.08} as="li">
-              <GlassCard className="relative h-full overflow-hidden p-6" corners>
+              <TerminalCard
+                label={`pcs://officers/${officer.id.replace(/[[\]]/g, "").toLowerCase()}`}
+                className="relative h-full overflow-hidden"
+                contentClassName="p-6"
+                corners
+              >
                 <span className="scan-bar" aria-hidden />
                 <div className="flex items-start justify-between">
                   <NodeAvatar seed={i + 1} />
@@ -99,7 +104,7 @@ export default function Officers() {
                   <AtSign className="h-3.5 w-3.5" aria-hidden />
                   Contact
                 </a>
-              </GlassCard>
+              </TerminalCard>
             </Reveal>
           ))}
         </ul>

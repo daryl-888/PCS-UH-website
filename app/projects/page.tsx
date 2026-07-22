@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import SiteChrome from "@/components/SiteChrome";
-import GlassCard from "@/components/GlassCard";
+import TerminalCard from "@/components/TerminalCard";
 import Reveal from "@/components/Reveal";
 import Projects from "@/components/Projects";
 import { CONTACT_EMAIL } from "@/data/nav";
@@ -42,7 +42,13 @@ export default function ProjectsPage() {
       >
         <div className="mx-auto max-w-site px-4 text-center sm:px-6 lg:px-10">
           <Reveal>
-            <GlassCard className="mx-auto max-w-xl p-8 sm:p-10" corners beam>
+            <TerminalCard
+              label="pcs://projects/submit"
+              className="mx-auto max-w-xl"
+              contentClassName="p-8 sm:p-10"
+              corners
+              beam
+            >
               <p className="font-mono text-[10px] tracking-[0.24em] text-gpu">
                 SUBMIT_A_PROJECT
               </p>
@@ -61,7 +67,7 @@ export default function ProjectsPage() {
               >
                 Submit a Project
               </a>
-            </GlassCard>
+            </TerminalCard>
           </Reveal>
         </div>
       </section>

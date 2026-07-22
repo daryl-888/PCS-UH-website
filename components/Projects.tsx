@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { GitBranch, ArrowUpRight } from "lucide-react";
 import SectionLabel from "@/components/SectionLabel";
-import GlassCard from "@/components/GlassCard";
+import TerminalCard from "@/components/TerminalCard";
 import Reveal from "@/components/Reveal";
 import StatusBadge from "@/components/StatusBadge";
 import { projects, type Project } from "@/data/projects";
@@ -128,7 +128,13 @@ export default function Projects() {
         <ul className="grid gap-5 lg:grid-cols-2">
           {projects.map((project, i) => (
             <Reveal key={project.id} delay={(i % 2) * 0.1} as="li">
-              <GlassCard className="grid h-full gap-5 p-5 sm:grid-cols-[200px,1fr]" corners beam>
+              <TerminalCard
+                label={`pcs://projects/${project.id.toLowerCase()}`}
+                className="h-full"
+                contentClassName="grid gap-5 p-5 sm:grid-cols-[200px,1fr]"
+                corners
+                beam
+              >
                 <ProjectVisual visual={project.visual} />
 
                 <div className="flex flex-col">
@@ -203,7 +209,7 @@ export default function Projects() {
                     </a>
                   </div>
                 </div>
-              </GlassCard>
+              </TerminalCard>
             </Reveal>
           ))}
         </ul>

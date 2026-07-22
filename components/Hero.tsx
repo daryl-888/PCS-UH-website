@@ -1,11 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Github } from "lucide-react";
 import AnimatedGrid from "@/components/AnimatedGrid";
 import TerminalLabel from "@/components/TerminalLabel";
-import { GITHUB_URL } from "@/data/nav";
+import { GITHUB_URL, MEMBERSHIP_FORM_URL } from "@/data/nav";
 
 const container = {
   hidden: {},
@@ -32,7 +31,7 @@ export default function Hero() {
   return (
     <section
       id="home"
-      className="relative flex min-h-screen flex-col justify-center pt-16"
+      className="relative flex min-h-screen min-h-svh flex-col justify-center pt-16"
       aria-label="Introduction"
     >
       <AnimatedGrid depthShift />
@@ -61,7 +60,7 @@ export default function Hero() {
               variants={item}
               className="mb-5 font-mono text-[11px] tracking-[0.3em] text-gpu"
             >
-              /// UNIVERSITY OF HOUSTON PARALLEL COMPUTING SOCIETY
+              /// UNIVERSITY OF HOUSTON
             </motion.p>
 
             <motion.h1
@@ -69,36 +68,31 @@ export default function Hero() {
               className="font-hero uppercase leading-[0.95] tracking-tight text-textPrimary"
             >
               <span className="block text-3xl font-bold sm:text-4xl md:text-5xl">
-                The Future of
+                Parallel
               </span>
               <span className="headline-gradient glow-text block text-5xl font-black sm:text-6xl md:text-7xl xl:text-8xl">
                 Computing
               </span>
               <span className="block text-3xl font-bold sm:text-4xl md:text-5xl">
-                Is Parallel<span className="text-gpu">.</span>
+                Society
               </span>
             </motion.h1>
 
             <motion.p
               variants={item}
-              className="mt-6 max-w-lg text-sm leading-relaxed text-textSecondary md:text-base"
+              className="mt-6 max-w-lg font-mono text-sm tracking-[0.06em] text-gpu md:text-base"
             >
-              A student-led community for GPU computing, CUDA, and
-              high-performance systems.
-            </motion.p>
-            <motion.p
-              variants={item}
-              className="mt-2 max-w-md font-mono text-xs text-textMuted"
-            >
-              No prior GPU experience required. Bring curiosity.
+              The Future of Computing Is Parallel<span className="text-gpu">.</span>
             </motion.p>
 
             <motion.div
               variants={item}
               className="mt-9 flex flex-wrap items-center justify-center gap-4 lg:justify-start"
             >
-              <Link
-                href="/membership"
+              <a
+                href={MEMBERSHIP_FORM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="group inline-flex items-center gap-2 rounded-md border border-lineActive bg-gpu px-5 py-3 font-mono text-xs font-medium uppercase tracking-[0.16em] text-obsidian transition-all hover:bg-mint hover:shadow-glowStrong"
               >
                 Join PCS
@@ -106,7 +100,7 @@ export default function Hero() {
                   className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
                   aria-hidden
                 />
-              </Link>
+              </a>
               <a
                 href={GITHUB_URL}
                 target="_blank"

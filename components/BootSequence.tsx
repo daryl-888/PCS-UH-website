@@ -30,18 +30,18 @@ export default function BootSequence() {
   const dismiss = useCallback(() => {
     setDismissing(true);
     try {
-      sessionStorage.setItem("pcs-booted", "1");
+      localStorage.setItem("pcs-booted", "1");
     } catch {
       /* storage unavailable — fine */
     }
     window.setTimeout(() => setShow(false), 340);
   }, []);
 
-  // Decide whether to boot (client only, once).
+  // Decide whether to boot (client only, once ever — not just once per tab).
   useEffect(() => {
     let booted = false;
     try {
-      booted = sessionStorage.getItem("pcs-booted") === "1";
+      booted = localStorage.getItem("pcs-booted") === "1";
     } catch {
       booted = false;
     }

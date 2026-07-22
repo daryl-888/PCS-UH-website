@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Float, useGLTF } from "@react-three/drei";
+import { Float, useAnimations, useGLTF } from "@react-three/drei";
 import { type MotionValue, useMotionValueEvent } from "framer-motion";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { usePrefersReducedMotion, useIsMobile, useTabVisible } from "@/lib/hooks";
@@ -20,11 +20,11 @@ const MODEL_URL = "/models/geforce_rtx_4090_founders_edition.glb";
 // ---------------------------------------------------------------------
 const SCROLL_STOPS = [0, 1 / 4, 2 / 4, 3 / 4, 1];
 /** rotation around the vertical axis (turntable spin) */
-const POSE_Y = [-0.15, 0.75, -0.85, 1.35, 1.9];
+const POSE_Y = [-1, 0, -0.85, 1.35, 1.9];
 /** rotation around the depth axis (barrel roll / tilt) */
-const POSE_Z = [1.5, 1.05, 0.45, 0.12, 0.18];
+const POSE_Z = [1, 1.3, 0.45, 0.12, 0.18];
 /** rotation around the horizontal axis (pitch) */
-const POSE_X = [0.05, 0.22, -0.18, 0.24, 0.1];
+const POSE_X = [-1, 1.3, -0.18, 0.24, 0.1];
 // Lateral drift (world units) — this is what actually dodges the text
 // columns; it's signed to match whichever side is empty on the *page* at
 // that section (world +X renders on the right of the screen, world -X on
@@ -47,6 +47,17 @@ const POSE_TZ = [0, -22, 18, -14, 10];
  *  (hero) is the tight framing; it pulls back further at each later stop
  *  so the lateral drift above still reads as a full, uncropped card. */
 const POSE_ZOOM = [300, 365, 415, 445, 465];
+/** uniform scale multiplier applied directly to the card's own group, on
+ *  top of the camera dolly above — an extra, independent lever on the
+ *  card's apparent size at each stop. Rotation (POSE_X/Y/Z) is never
+ *  touched by this channel. */
+const POSE_SCALE = [1.08, 1, 0.94, 0.88, 0.85];
+
+/** Canvas height the camera FOV / lighting rig were authored against.
+ *  Everything below this line reacts to *page/viewport* scale only — the
+ *  GPU card's own pose (rotation, position, POSE_SCALE) is untouched by it. */
+const BASE_VIEWPORT_HEIGHT = 900;
+const BASE_FOV = 32;
 
 /** The aspect ratio POSE_TX/POSE_TZ were tuned against. Wider windows show
  *  more world-width for the same vertical FOV, so lateral drift needs to
@@ -147,6 +158,66 @@ function CameraRig({
   return null;
 }
 
+/** Widens the camera's FOV as the viewport (page) shrinks, so the framing
+ *  stays readable at any window/page scale — purely a viewport response,
+ *  independent of the scroll-driven dolly above and of the card's own pose. */
+function ResponsiveCameraRig() {
+  const { camera, size } = useThree();
+
+  useEffect(() => {
+    const rigScale = THREE.MathUtils.clamp(
+      size.height / BASE_VIEWPORT_HEIGHT,
+      0.55,
+      1.25
+    );
+    const perspective = camera as THREE.PerspectiveCamera;
+    perspective.fov = THREE.MathUtils.clamp(BASE_FOV / rigScale, 24, 44);
+    perspective.updateProjectionMatrix();
+  }, [camera, size]);
+
+  return null;
+}
+
+/** Studio lighting rig, sized to the current viewport. Directional lights
+ *  only care about direction (position → origin), not literal distance, so
+ *  "scaling" them is expressed as intensity here — brighter on a small/
+ *  shrunk page canvas, settling back down on a large one — rather than a
+ *  position change that would be a visual no-op. */
+function LightingRig() {
+  const { size } = useThree();
+  const intensityScale = THREE.MathUtils.clamp(
+    BASE_VIEWPORT_HEIGHT / size.height,
+    0.85,
+    1.35
+  );
+
+  return (
+    <>
+      <directionalLight
+        position={[-2.2, 6, -3.5]}
+        intensity={3.4 * intensityScale}
+        color="#ffffff"
+      />
+      <directionalLight
+        position={[6, -0.5, 2.5]}
+        intensity={1.8 * intensityScale}
+        color="#ffffff"
+      />
+      <directionalLight
+        position={[1, 1, 6]}
+        intensity={0.6 * intensityScale}
+        color="#ffffff"
+      />
+      <directionalLight
+        position={[-5, -2, 2]}
+        intensity={0.35 * intensityScale}
+        color="#f2f4f5"
+      />
+      <ambientLight intensity={0.06} />
+    </>
+  );
+}
+
 /** Loads the GLB, normalizes its scale/centering, and turns to face the
  *  scroll-driven pose. */
 function GpuCard({
@@ -159,8 +230,22 @@ function GpuCard({
   scrollProgress: MotionValue<number>;
 }) {
   const group = useRef<THREE.Group>(null);
-  const { scene } = useGLTF(MODEL_URL);
+  const { scene, animations } = useGLTF(MODEL_URL);
+  const { actions } = useAnimations(animations, scene);
   const { size } = useThree();
+
+  // The GLB's built-in clip targets only Fan_Back and Fan_Front, preserving
+  // the card and fan transforms while rotating each fan around its authored
+  // local axis.
+  useEffect(() => {
+    const fanAction = actions["Takeoff Mode"];
+    if (!fanAction || paused) return;
+    fanAction.timeScale = 0.8;
+    fanAction.reset().play();
+    return () => {
+      fanAction.stop();
+    };
+  }, [actions, paused]);
 
   // Fit any model into a ~90 unit frame, center it, and punch up its
   // materials — a tight camera on stock envMapIntensity reads flat, so we
@@ -210,12 +295,14 @@ function GpuCard({
     const targetTX = interpolateStops(t, SCROLL_STOPS, POSE_TX) * lateralScale;
     const targetTY = interpolateStops(t, SCROLL_STOPS, POSE_TY);
     const targetTZ = interpolateStops(t, SCROLL_STOPS, POSE_TZ) * lateralScale;
+    const targetScale = interpolateStops(t, SCROLL_STOPS, POSE_SCALE);
 
     if (paused) {
       // reduced-motion / hidden tab: snap straight to the scroll-dictated
       // pose, no idle drift
       group.current.rotation.set(targetRotX, targetY, targetRotZ);
       group.current.position.set(targetTX, targetTY, targetTZ);
+      group.current.scale.setScalar(targetScale);
       return;
     }
 
@@ -236,6 +323,9 @@ function GpuCard({
     group.current.position.x = THREE.MathUtils.lerp(group.current.position.x, tx, 0.045);
     group.current.position.y = THREE.MathUtils.lerp(group.current.position.y, targetTY, 0.045);
     group.current.position.z = THREE.MathUtils.lerp(group.current.position.z, targetTZ, 0.045);
+    group.current.scale.setScalar(
+      THREE.MathUtils.lerp(group.current.scale.x, targetScale, 0.045)
+    );
   });
 
   return (
@@ -243,6 +333,7 @@ function GpuCard({
       ref={group}
       rotation={[POSE_X[0], POSE_Y[0], POSE_Z[0]]}
       position={[POSE_TX[0], POSE_TY[0], POSE_TZ[0]]}
+      scale={[POSE_SCALE[0], POSE_SCALE[0], POSE_SCALE[0]]}
     >
       <primitive object={scene} />
     </group>
@@ -273,13 +364,11 @@ export default function GpuModel({
         <StudioEnvironment />
         <ScrollInvalidator paused={paused} scrollProgress={scrollProgress} />
         <CameraRig paused={paused} mobile={mobile} scrollProgress={scrollProgress} />
+        <ResponsiveCameraRig />
         {/* clean, neutral studio lighting — no color cast, so the card
-            reads crisp and true-to-metal instead of tinted */}
-        <directionalLight position={[-2.2, 6, -3.5]} intensity={3.4} color="#ffffff" />
-        <directionalLight position={[6, -0.5, 2.5]} intensity={1.8} color="#ffffff" />
-        <directionalLight position={[1, 1, 6]} intensity={0.6} color="#ffffff" />
-        <directionalLight position={[-5, -2, 2]} intensity={0.35} color="#f2f4f5" />
-        <ambientLight intensity={0.06} />
+            reads crisp and true-to-metal instead of tinted; sized to the
+            current viewport by LightingRig */}
+        <LightingRig />
 
         <Suspense fallback={null}>
           <Float

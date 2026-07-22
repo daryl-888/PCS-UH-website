@@ -2,9 +2,8 @@
 
 import { CheckCircle2, FileDown, Presentation } from "lucide-react";
 import SectionLabel from "@/components/SectionLabel";
-import GlassCard from "@/components/GlassCard";
+import TerminalCard from "@/components/TerminalCard";
 import Reveal from "@/components/Reveal";
-import TerminalTitlebar from "@/components/TerminalTitlebar";
 import { sponsorBenefits } from "@/data/sponsors";
 import { CONTACT_EMAIL } from "@/data/nav";
 
@@ -27,11 +26,11 @@ export default function Sponsors() {
         <div className="grid gap-6 lg:grid-cols-[1.4fr,1fr]">
           {/* benefits */}
           <Reveal>
-            <GlassCard className="p-6 sm:p-8" corners>
-              <TerminalTitlebar
-                label="SPONSORSHIP_MANIFEST.TXT"
-                className="-mx-6 -mt-6 mb-6 sm:-mx-8 sm:-mt-8"
-              />
+            <TerminalCard
+              label="SPONSORSHIP_MANIFEST.TXT"
+              contentClassName="p-6 sm:p-8"
+              corners
+            >
               <ul className="grid gap-x-8 gap-y-5 sm:grid-cols-2">
                 {sponsorBenefits.map((benefit) => (
                   <li key={benefit.id} className="flex items-start gap-3">
@@ -50,12 +49,18 @@ export default function Sponsors() {
                   </li>
                 ))}
               </ul>
-            </GlassCard>
+            </TerminalCard>
           </Reveal>
 
           {/* CTA panel */}
           <Reveal delay={0.12}>
-            <GlassCard className="flex h-full flex-col justify-between bg-panelHigh p-6 sm:p-8" corners beam>
+            <TerminalCard
+              label="PARTNER_UPLINK.LOG"
+              className="flex h-full flex-col"
+              contentClassName="flex flex-1 flex-col justify-between bg-panelHigh p-6 sm:p-8"
+              corners
+              beam
+            >
               <div>
                 <p className="font-mono text-[10px] tracking-[0.24em] text-holo">
                   [PARTNER_UPLINK: OPEN]
@@ -88,7 +93,7 @@ export default function Sponsors() {
                   RESPONSE_SLA: 48 HOURS
                 </p>
               </div>
-            </GlassCard>
+            </TerminalCard>
           </Reveal>
         </div>
       </div>

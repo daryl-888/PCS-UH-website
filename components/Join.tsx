@@ -7,8 +7,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AnimatePresence, motion } from "framer-motion";
 import { CheckCircle2, Loader2 } from "lucide-react";
 import SectionLabel from "@/components/SectionLabel";
-import GlassCard from "@/components/GlassCard";
+import TerminalCard from "@/components/TerminalCard";
 import Reveal from "@/components/Reveal";
+import { MEMBERSHIP_FORM_URL } from "@/data/nav";
 import { cn } from "@/lib/utils";
 
 const INTERESTS = [
@@ -99,12 +100,25 @@ export default function Join() {
             title="Initialize Membership"
             subtitle="Join UH PCS to access workshops, project teams, GitHub repositories, sponsor events, and a community of students learning the future of computing."
           />
+          <a
+            href={MEMBERSHIP_FORM_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.18em] text-mint transition-colors hover:text-holo"
+          >
+            Prefer a quick form? Fill out our interest form →
+          </a>
         </Reveal>
 
         <div className="grid gap-6 lg:grid-cols-[1fr,1.4fr]">
           {/* benefits */}
           <Reveal>
-            <GlassCard className="h-full p-6 sm:p-8" corners>
+            <TerminalCard
+              label="pcs://join/member_privileges"
+              className="h-full"
+              contentClassName="p-6 sm:p-8"
+              corners
+            >
               <p className="mb-5 font-mono text-[10px] tracking-[0.24em] text-textMuted">
                 MEMBER_PRIVILEGES
               </p>
@@ -122,12 +136,18 @@ export default function Join() {
               <p className="mt-8 border-t border-line pt-5 font-mono text-[11px] leading-relaxed text-textMuted">
                 Join the node. Scale the system.
               </p>
-            </GlassCard>
+            </TerminalCard>
           </Reveal>
 
           {/* form / success */}
           <Reveal delay={0.1}>
-            <GlassCard className="relative overflow-hidden p-6 sm:p-8" corners beam>
+            <TerminalCard
+              label="pcs://join/request_access"
+              className="relative overflow-hidden"
+              contentClassName="p-6 sm:p-8"
+              corners
+              beam
+            >
               <AnimatePresence mode="wait">
                 {submitted ? (
                   <motion.div
@@ -294,7 +314,7 @@ export default function Join() {
                   </motion.form>
                 )}
               </AnimatePresence>
-            </GlassCard>
+            </TerminalCard>
           </Reveal>
         </div>
       </div>
