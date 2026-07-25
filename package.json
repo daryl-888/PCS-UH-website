@@ -3,10 +3,14 @@
   "version": "1.0.0",
   "private": true,
   "description": "University of Houston Parallel Computing Society — GPU compute command center website",
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && node scripts/postbuild-standalone.mjs",
     "start": "next start",
+    "start:standalone": "node .next/standalone/server.js",
     "lint": "next lint"
   },
   "dependencies": {
