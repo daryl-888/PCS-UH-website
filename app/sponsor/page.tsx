@@ -1,18 +1,13 @@
 import type { Metadata } from "next";
-import { Mail, Phone, HandCoins, ArrowUpRight } from "lucide-react";
+import Link from "next/link";
+import { HandCoins, ArrowUpRight } from "lucide-react";
 import SiteChrome from "@/components/SiteChrome";
 import SectionLabel from "@/components/SectionLabel";
 import TerminalCard from "@/components/TerminalCard";
 import SponsorTiers from "@/components/SponsorTiers";
 import Sponsors from "@/components/Sponsors";
 import Reveal from "@/components/Reveal";
-import {
-  sponsorStats,
-  programTypes,
-  sponsorContacts,
-  donateSteps,
-  GIVING_PORTAL_URL,
-} from "@/data/sponsorship";
+import { sponsorStats, programTypes, donateSteps, GIVING_PORTAL_URL } from "@/data/sponsorship";
 
 export const metadata: Metadata = {
   title: "Sponsor — UH PCS",
@@ -187,54 +182,38 @@ export default function SponsorPage() {
         </div>
       </section>
 
-      {/* direct officer contacts */}
+      {/* talk to the team — real contacts live on the officer board */}
       <section
         className="relative border-t border-line py-20 md:py-28"
-        aria-label="Sponsor contacts"
+        aria-label="Talk to the team"
       >
-        <div className="mx-auto max-w-site px-4 sm:px-6 lg:px-10">
+        <div className="mx-auto max-w-site px-4 text-center sm:px-6 lg:px-10">
           <Reveal>
-            <SectionLabel
-              code="SEC.04 // SPONSOR_CONTACTS"
-              title="Talk to the Team"
-              subtitle="Questions or ready to set up a custom partnership? Reach out directly."
-            />
+            <TerminalCard
+              label="pcs://sponsor/team"
+              className="mx-auto max-w-xl"
+              contentClassName="p-8 text-center sm:p-10"
+              corners
+            >
+              <p className="font-mono text-[10px] tracking-[0.24em] text-gpu">
+                TALK_TO_THE_TEAM
+              </p>
+              <h3 className="mt-3 font-display text-2xl font-bold text-textPrimary">
+                Ready for a custom partnership?
+              </h3>
+              <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-textSecondary">
+                Reach the officer team directly — the President, Senior VP,
+                and Technical leads are listed on the officer board.
+              </p>
+              <Link
+                href="/about#officers"
+                className="mt-6 inline-flex items-center gap-2 rounded-md border border-lineActive bg-gpu/12 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.16em] text-mint transition-all hover:bg-gpu/25 hover:shadow-glow"
+              >
+                Meet the Officer Team
+                <ArrowUpRight className="h-3.5 w-3.5" aria-hidden />
+              </Link>
+            </TerminalCard>
           </Reveal>
-          <ul className="grid gap-5 sm:grid-cols-2">
-            {sponsorContacts.map((contact, i) => (
-              <Reveal key={contact.email} delay={(i % 2) * 0.08} as="li">
-                <TerminalCard
-                  label={`pcs://sponsor/contacts/${contact.name.toLowerCase().replace(/\s+/g, "_")}`}
-                  className="h-full"
-                  contentClassName="p-6"
-                  corners
-                >
-                  <h3 className="font-display text-lg font-bold text-textPrimary">
-                    {contact.name}
-                  </h3>
-                  <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-gpu">
-                    {contact.role}
-                  </p>
-                  <div className="mt-4 space-y-2 border-t border-line pt-4">
-                    <a
-                      href={`mailto:${contact.email}`}
-                      className="flex items-center gap-2 font-mono text-xs text-textSecondary transition-colors hover:text-mint"
-                    >
-                      <Mail className="h-3.5 w-3.5 text-gpu" aria-hidden />
-                      {contact.email}
-                    </a>
-                    <a
-                      href={`tel:${contact.phone.replace(/[^\d+]/g, "")}`}
-                      className="flex items-center gap-2 font-mono text-xs text-textSecondary transition-colors hover:text-mint"
-                    >
-                      <Phone className="h-3.5 w-3.5 text-gpu" aria-hidden />
-                      {contact.phone}
-                    </a>
-                  </div>
-                </TerminalCard>
-              </Reveal>
-            ))}
-          </ul>
         </div>
       </section>
     </SiteChrome>

@@ -1,6 +1,6 @@
 "use client";
 
-import { AtSign } from "lucide-react";
+import { AtSign, Phone } from "lucide-react";
 import SectionLabel from "@/components/SectionLabel";
 import TerminalCard from "@/components/TerminalCard";
 import Reveal from "@/components/Reveal";
@@ -97,13 +97,24 @@ export default function Officers() {
                     <dd className="text-textSecondary">{officer.focus}</dd>
                   </div>
                 </dl>
-                <a
-                  href={officer.contact}
-                  className="mt-5 inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-textMuted transition-colors hover:text-mint"
-                >
-                  <AtSign className="h-3.5 w-3.5" aria-hidden />
-                  Contact
-                </a>
+                <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1.5">
+                  <a
+                    href={officer.contact}
+                    className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-textMuted transition-colors hover:text-mint"
+                  >
+                    <AtSign className="h-3.5 w-3.5" aria-hidden />
+                    Contact
+                  </a>
+                  {officer.phone ? (
+                    <a
+                      href={`tel:${officer.phone.replace(/[^\d+]/g, "")}`}
+                      className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-textMuted transition-colors hover:text-mint"
+                    >
+                      <Phone className="h-3.5 w-3.5" aria-hidden />
+                      {officer.phone}
+                    </a>
+                  ) : null}
+                </div>
               </TerminalCard>
             </Reveal>
           ))}

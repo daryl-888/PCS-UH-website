@@ -22,7 +22,7 @@ export default function FinalCTA() {
   return (
     <section
       id="join"
-      className="relative border-t border-line py-28 md:py-40"
+      className="relative flex min-h-screen min-h-dvh snap-start flex-col justify-center border-t border-line py-20"
       aria-label="Join UH PCS"
     >
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-10">

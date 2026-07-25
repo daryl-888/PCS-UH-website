@@ -31,7 +31,7 @@ export default function Mission() {
   return (
     <section
       id="mission"
-      className="relative py-28 md:py-40 lg:py-52"
+      className="relative flex min-h-screen min-h-dvh snap-start flex-col justify-center py-24"
       aria-label="Mission"
     >
       <div className="mx-auto max-w-site px-4 sm:px-6 lg:px-10">

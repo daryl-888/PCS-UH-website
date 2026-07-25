@@ -31,7 +31,7 @@ export default function Hero() {
   return (
     <section
       id="home"
-      className="relative flex min-h-screen min-h-svh flex-col justify-center pt-16"
+      className="relative flex min-h-screen min-h-svh snap-start flex-col justify-center pt-16"
       aria-label="Introduction"
     >
       <AnimatedGrid depthShift />

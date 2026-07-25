@@ -1,6 +1,7 @@
 import BootSequence from "@/components/BootSequence";
 import Scanlines from "@/components/Scanlines";
 import ScrollGpuScene from "@/components/ScrollGpuScene";
+import ScrollSnapLanding from "@/components/ScrollSnapLanding";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Mission from "@/components/Mission";
@@ -14,6 +15,7 @@ export default function Page() {
   return (
     <ScrollProgressProvider>
       <BootSequence />
+      <ScrollSnapLanding />
       <ScrollGpuScene />
       <Scanlines />
       <Navbar />

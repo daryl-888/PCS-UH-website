@@ -2,44 +2,52 @@ export type Officer = {
   id: string;
   name: string;
   role: string;
+  /** "—" where not yet published — avoid guessing a real officer's major. */
   major: string;
   focus: string;
   contact: string;
+  phone?: string;
 };
 
-// TODO: replace placeholder names/majors/contacts with real officers.
+// Sourced from the UH PCS Sponsorship Packet (2026–2027), closing page —
+// the four officers listed there as sponsorship contacts. Events Lead and
+// Sponsorship Lead are still placeholders pending real names.
 export const officers: Officer[] = [
   {
     id: "[MAINTAINER-01]",
-    name: "Officer Name",
+    name: "Daryl Alfaro",
     role: "President",
-    major: "Computer Science",
+    major: "—",
     focus: "GPU computing · Org direction",
-    contact: "#",
+    contact: "mailto:Dpalfaro@cougarnet.uh.edu",
+    phone: "(346) 221-6817",
   },
   {
     id: "[MAINTAINER-02]",
-    name: "Officer Name",
-    role: "Vice President",
-    major: "Computer Engineering",
+    name: "Nguyen Hang",
+    role: "Senior Vice President",
+    major: "—",
     focus: "Workshops · Curriculum",
-    contact: "#",
+    contact: "mailto:Nghang@cougarnet.uh.edu",
+    phone: "(415) 279-3342",
   },
   {
     id: "[MAINTAINER-03]",
-    name: "Officer Name",
-    role: "Technical Operations",
-    major: "Computer Science",
+    name: "Michael Hernandez",
+    role: "VP Technical Operations",
+    major: "—",
     focus: "Infrastructure · GitHub org",
-    contact: "#",
+    contact: "mailto:Mahern69@cougarnet.uh.edu",
+    phone: "(832) 716-3924",
   },
   {
     id: "[MAINTAINER-04]",
-    name: "Officer Name",
-    role: "Technical Relations",
-    major: "Electrical Engineering",
+    name: "Jimmy Vieyra",
+    role: "VP Technical Relations",
+    major: "—",
     focus: "Industry outreach · Speakers",
-    contact: "#",
+    contact: "mailto:Jvieyra@cougarnet.uh.edu",
+    phone: "(832) 897-3668",
   },
   {
     id: "[MAINTAINER-05]",

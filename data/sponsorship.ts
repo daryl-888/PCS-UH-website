@@ -116,41 +116,6 @@ export const tierBenefits: TierBenefitRow[] = [
   { label: "Company-Sponsored Project", included: [false, false, false, true] },
 ];
 
-export type SponsorContact = {
-  name: string;
-  role: string;
-  email: string;
-  phone: string;
-};
-
-/** Sponsorship packet closing page — direct officer contacts, packet page 8. */
-export const sponsorContacts: SponsorContact[] = [
-  {
-    name: "Daryl Alfaro",
-    role: "President",
-    email: "Dpalfaro@cougarnet.uh.edu",
-    phone: "(346) 221-6817",
-  },
-  {
-    name: "Nguyen Hang",
-    role: "Senior Vice President",
-    email: "Nghang@cougarnet.uh.edu",
-    phone: "(415) 279-3342",
-  },
-  {
-    name: "Jimmy Vieyra",
-    role: "VP Technical Relations",
-    email: "Jvieyra@cougarnet.uh.edu",
-    phone: "(832) 897-3668",
-  },
-  {
-    name: "Michael Hernandez",
-    role: "VP Technical Operations",
-    email: "Mahern69@cougarnet.uh.edu",
-    phone: "(832) 716-3924",
-  },
-];
-
 export const GIVING_PORTAL_URL = "https://giving.uh.edu/gift";
 
 /** "How to donate" steps, packet page 7 — the one-time-gift alternative to a tiered sponsorship. */

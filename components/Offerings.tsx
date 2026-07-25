@@ -23,7 +23,7 @@ export default function Offerings() {
   return (
     <section
       id="offer"
-      className="relative border-t border-line py-28 md:py-40 lg:py-52"
+      className="relative flex min-h-screen min-h-dvh snap-start flex-col justify-center border-t border-line py-24"
       aria-label="What we offer"
     >
       <div className="mx-auto max-w-site px-4 sm:px-6 lg:px-10">

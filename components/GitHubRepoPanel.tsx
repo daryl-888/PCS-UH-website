@@ -29,7 +29,7 @@ export default function GitHubRepoPanel() {
   return (
     <section
       id="github"
-      className="relative border-t border-line py-28 md:py-40 lg:py-52"
+      className="relative flex min-h-screen min-h-dvh snap-start flex-col justify-center border-t border-line py-24"
       aria-label="GitHub repositories"
     >
       {/* Narrower + centered than the other sections — deliberately leaves
