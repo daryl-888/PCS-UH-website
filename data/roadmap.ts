@@ -13,6 +13,10 @@ export type RoadmapEvent = {
   category: RoadmapCategory;
   /** ISO yyyy-mm-dd, or null when the packet lists the date as TBD */
   date: string | null;
+  /** Not yet published — fill in as details are confirmed each semester. */
+  time?: string;
+  location?: string;
+  description?: string;
 };
 
 export const roadmapEvents: RoadmapEvent[] = [

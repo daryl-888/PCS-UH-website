@@ -48,7 +48,46 @@ function buildWeeks(year: number, month: number) {
   return weeks;
 }
 
-/** Navigable month-grid view of the semester roadmap (packet "Timeline of Events"). */
+/** Hover target for a single day's event — the popover reads time/location/
+ *  description straight off RoadmapEvent, falling back to placeholders
+ *  until the club publishes real details for that session. */
+function EventPill({ event }: { event: RoadmapEvent }) {
+  return (
+    <div className="group/pill relative">
+      <p
+        className="flex cursor-default items-start gap-1 truncate text-[8px] leading-tight text-textSecondary sm:text-[9px]"
+      >
+        <span
+          className={cn("mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full", categoryTone[event.category])}
+          aria-hidden
+        />
+        <span className="truncate">{event.title}</span>
+      </p>
+      <div className="pointer-events-none absolute left-1/2 top-full z-30 mt-1.5 w-56 -translate-x-1/2 rounded-md border border-lineActive bg-black p-3 opacity-0 shadow-glow transition-opacity duration-150 group-hover/pill:opacity-100">
+        <p className="font-mono text-[10px] tracking-[0.16em] text-gpu">{event.title}</p>
+        <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.14em] text-textMuted">
+          {event.category}
+        </p>
+        <dl className="mt-2 space-y-1 font-mono text-[10px] text-textSecondary">
+          <div className="flex gap-2">
+            <dt className="w-14 shrink-0 text-textMuted">TIME</dt>
+            <dd>{event.time ?? "TBA"}</dd>
+          </div>
+          <div className="flex gap-2">
+            <dt className="w-14 shrink-0 text-textMuted">LOCATION</dt>
+            <dd>{event.location ?? "TBA"}</dd>
+          </div>
+        </dl>
+        <p className="mt-2 text-[11px] leading-relaxed text-textSecondary">
+          {event.description ?? "Details coming soon."}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/** Navigable month-grid view of the semester roadmap (packet "Timeline of
+ *  Events") — hover an event for its detail popover. */
 export default function EventsCalendar() {
   const initial = useMemo(initialMonth, []);
   const [year, setYear] = useState(initial.year);
@@ -92,7 +131,7 @@ export default function EventsCalendar() {
   });
 
   return (
-    <TerminalCard label="pcs://events/calendar" contentClassName="p-4 sm:p-6" corners>
+    <TerminalCard label="pcs://events/calendar" contentClassName="p-4 pb-10 sm:p-6 sm:pb-12" corners>
       <div className="mb-4 flex items-center justify-between">
         <button
           type="button"
@@ -147,20 +186,7 @@ export default function EventsCalendar() {
               </p>
               <div className="mt-1 space-y-0.5">
                 {dayEvents.map((event) => (
-                  <p
-                    key={event.id}
-                    className="flex items-start gap-1 truncate text-[8px] leading-tight text-textSecondary sm:text-[9px]"
-                    title={event.title}
-                  >
-                    <span
-                      className={cn(
-                        "mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full",
-                        categoryTone[event.category]
-                      )}
-                      aria-hidden
-                    />
-                    <span className="truncate">{event.title}</span>
-                  </p>
+                  <EventPill key={event.id} event={event} />
                 ))}
               </div>
             </div>

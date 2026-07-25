@@ -98,13 +98,15 @@ export default function Officers() {
                   </div>
                 </dl>
                 <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1.5">
-                  <a
-                    href={officer.contact}
-                    className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-textMuted transition-colors hover:text-mint"
-                  >
-                    <AtSign className="h-3.5 w-3.5" aria-hidden />
-                    Contact
-                  </a>
+                  {officer.contact !== "#" ? (
+                    <a
+                      href={`mailto:${officer.contact}`}
+                      className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.08em] text-textMuted transition-colors hover:text-mint"
+                    >
+                      <AtSign className="h-3.5 w-3.5" aria-hidden />
+                      {officer.contact}
+                    </a>
+                  ) : null}
                   {officer.phone ? (
                     <a
                       href={`tel:${officer.phone.replace(/[^\d+]/g, "")}`}

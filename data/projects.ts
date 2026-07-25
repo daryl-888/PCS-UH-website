@@ -25,7 +25,7 @@ export const projects: Project[] = [
     difficulty: "Beginner",
     description:
       "A cycle-accurate emulator teaching fetch, decode, execute, and registers.",
-    repo: "https://github.com/uh-pcs/8bit-cpu-emulator", // TODO: real repo
+    repo: "https://github.com/daryl-888/DD-Emuluted", // TODO: real repo
     stats: [
       { label: "ISA", value: "16 instructions" },
       { label: "CLOCK", value: "Cycle-accurate" },
