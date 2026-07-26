@@ -15,9 +15,10 @@ const BOOT_LINES = [
 ];
 
 /**
- * Terminal POST sequence shown once per browser (localStorage-gated) on
- * first load, and again on every hard refresh of that first session tab —
+ * Terminal POST sequence shown on every load/refresh of the landing page —
  * skippable with any key / click. Skipped entirely for reduced motion.
+ * (Previously gated to "once ever" via localStorage; dropped since the
+ * point is a boot moment every time you arrive, refresh included.)
  */
 export default function BootSequence() {
   const reduced = usePrefersReducedMotion();
@@ -30,26 +31,16 @@ export default function BootSequence() {
 
   const dismiss = useCallback(() => {
     setDismissing(true);
-    try {
-      localStorage.setItem("pcs-booted", "1");
-    } catch {
-      /* storage unavailable — fine */
-    }
     window.setTimeout(() => setShow(false), 340);
   }, []);
 
-  // Decide whether to boot (client only, once ever — not just once per tab).
+  // Decide whether to boot (client only — avoids a reduced-motion mismatch
+  // between server and client render).
   useEffect(() => {
-    let booted = false;
-    try {
-      booted = localStorage.getItem("pcs-booted") === "1";
-    } catch {
-      booted = false;
-    }
     const reducedNow = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
-    if (!booted && !reducedNow) setShow(true);
+    if (!reducedNow) setShow(true);
   }, []);
 
   // Type lines + fill progress, then dismiss.

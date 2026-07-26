@@ -1,13 +1,20 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { HandCoins, ArrowUpRight } from "lucide-react";
+import { HandCoins, ArrowUpRight, FileDown, Presentation } from "lucide-react";
 import SiteChrome from "@/components/SiteChrome";
 import SectionLabel from "@/components/SectionLabel";
 import TerminalCard from "@/components/TerminalCard";
 import SponsorTiers from "@/components/SponsorTiers";
 import Sponsors from "@/components/Sponsors";
 import Reveal from "@/components/Reveal";
-import { sponsorStats, programTypes, donateSteps, GIVING_PORTAL_URL } from "@/data/sponsorship";
+import {
+  sponsorStats,
+  programTypes,
+  donateSteps,
+  GIVING_PORTAL_URL,
+  SPONSORSHIP_PACKET_URL,
+} from "@/data/sponsorship";
+import { CONTACT_EMAIL } from "@/data/nav";
 
 export const metadata: Metadata = {
   title: "Sponsor — UH PCS",
@@ -41,6 +48,26 @@ export default function SponsorPage() {
                 — Daryl Alfaro, President
               </span>
             </p>
+          </Reveal>
+          <Reveal delay={0.14}>
+            <div className="mt-8 flex flex-wrap items-center gap-4">
+              <a
+                href={SPONSORSHIP_PACKET_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 rounded-md border border-lineActive bg-gpu px-5 py-3 font-mono text-xs font-medium uppercase tracking-[0.16em] text-obsidian transition-all hover:bg-mint hover:shadow-glowStrong"
+              >
+                <FileDown className="h-4 w-4" aria-hidden />
+                Request Sponsorship Packet
+              </a>
+              <a
+                href={`mailto:${CONTACT_EMAIL}?subject=UH%20PCS%20Workshop%20Hosting`}
+                className="flex items-center gap-2 rounded-md border border-line px-5 py-3 font-mono text-xs uppercase tracking-[0.16em] text-textPrimary transition-all hover:border-lineActive hover:text-mint"
+              >
+                <Presentation className="h-4 w-4" aria-hidden />
+                Host a Workshop
+              </a>
+            </div>
           </Reveal>
         </div>
       </section>

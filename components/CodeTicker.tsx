@@ -47,16 +47,16 @@ export default function CodeTicker({ className, reverse = false }: CodeTickerPro
   return (
     <div
       aria-hidden
-      className={cn("overflow-hidden border-y border-line bg-graphite/50 py-2.5", className)}
+      className={cn("overflow-hidden border-y border-line bg-graphite/50 py-4 sm:py-5", className)}
     >
       <div
         className={cn(
-          "flex w-max animate-marquee gap-10 whitespace-nowrap font-mono text-[11px] text-textSecondary sm:text-xs",
+          "flex w-max animate-marquee gap-12 whitespace-nowrap font-mono text-sm text-textSecondary sm:text-base",
           reverse && "[animation-direction:reverse]"
         )}
       >
         {items.map((line, i) => (
-          <span key={i} className="flex shrink-0 items-center gap-10">
+          <span key={i} className="flex shrink-0 items-center gap-12">
             {highlightLine(line)}
             <span className="text-gpu/50">//</span>
           </span>

@@ -25,11 +25,12 @@ export default function Offerings() {
   return (
     <section
       id="offer"
-      className="relative flex min-h-screen min-h-dvh snap-start flex-col justify-center border-t border-line py-24"
+      className="relative flex min-h-screen min-h-dvh flex-col justify-center border-t border-line py-24"
       aria-label="What we offer"
     >
       <AnimatedGrid depthShift />
       <CodeTickerVertical className="left-0" reverse />
+      <CodeTickerVertical className="right-[3%]" />
       <div className="mx-auto max-w-site px-4 sm:px-6 lg:px-10">
         {/* left column this time — alternates with Mission's right column so
             the GPU's open side changes with it as you scroll */}

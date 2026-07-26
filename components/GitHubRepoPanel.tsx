@@ -31,11 +31,12 @@ export default function GitHubRepoPanel() {
   return (
     <section
       id="github"
-      className="relative flex min-h-screen min-h-dvh snap-start flex-col justify-center border-t border-line py-24"
+      className="relative flex min-h-screen min-h-dvh flex-col justify-center border-t border-line py-24"
       aria-label="GitHub repositories"
     >
       <AnimatedGrid depthShift />
       <CodeTickerVertical className="right-0" />
+      <CodeTickerVertical className="left-[6%]" reverse />
       {/* Narrower + centered than the other sections — deliberately leaves
           open margins left and right so the GPU (now well zoomed-out at
           this scroll stop) frames the terminal window instead of hiding

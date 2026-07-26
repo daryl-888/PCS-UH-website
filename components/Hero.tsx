@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Github } from "lucide-react";
 import AnimatedGrid from "@/components/AnimatedGrid";
+import CodeTickerVertical from "@/components/CodeTickerVertical";
 import TerminalLabel from "@/components/TerminalLabel";
 import { GITHUB_URL, MEMBERSHIP_FORM_URL } from "@/data/nav";
 
@@ -31,10 +32,11 @@ export default function Hero() {
   return (
     <section
       id="home"
-      className="relative flex min-h-screen min-h-svh snap-start flex-col justify-center pt-16"
+      className="relative flex min-h-screen min-h-svh flex-col justify-center pt-16"
       aria-label="Introduction"
     >
       <AnimatedGrid depthShift />
+      <CodeTickerVertical className="left-[2%]" />
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 bg-hero-radial"

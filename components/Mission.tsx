@@ -33,11 +33,12 @@ export default function Mission() {
   return (
     <section
       id="mission"
-      className="relative flex min-h-screen min-h-dvh snap-start flex-col justify-center py-24"
+      className="relative flex min-h-screen min-h-dvh flex-col justify-center py-24"
       aria-label="Mission"
     >
       <AnimatedGrid depthShift />
       <CodeTickerVertical className="right-0" />
+      <CodeTickerVertical className="left-[3%]" reverse />
       <div className="mx-auto max-w-site px-4 sm:px-6 lg:px-10">
         {/* right column only — the left half stays clear of copy so the GPU
             (drifted/zoomed for this scroll stop) is never covered */}

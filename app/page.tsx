@@ -1,7 +1,6 @@
 import BootSequence from "@/components/BootSequence";
 import Scanlines from "@/components/Scanlines";
 import ScrollGpuScene from "@/components/ScrollGpuScene";
-import ScrollSnapLanding from "@/components/ScrollSnapLanding";
 import ParticleNetwork from "@/components/ParticleNetwork";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
@@ -17,7 +16,6 @@ export default function Page() {
   return (
     <ScrollProgressProvider>
       <BootSequence />
-      <ScrollSnapLanding />
       {/* Ambient drifting node-network, fixed behind the GPU render and every
           section — the same visual language as the boot screen, dialed down
           to a faint backdrop so it reads as "the cluster is alive" without

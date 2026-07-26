@@ -64,6 +64,6 @@ export const officers: Officer[] = [
     role: "Treasurer",
     major: "Accounting",
     focus: "Financial management · Budgeting",
-    contact: "#",
+    contact: "nventur2@cougarnet.uh.edu",
   },
 ];

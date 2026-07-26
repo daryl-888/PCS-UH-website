@@ -32,51 +32,55 @@ npm start        # serve the production build
 
 ## Deploy to Azure
 
-The site is deployed as a **hybrid Next.js app on Azure Static Web Apps (SWA)** — the static pages (everything except `/api/join`) are served straight from Azure's global CDN, and the one API route runs on a small **managed backend function** that SWA provisions automatically. There's no VM or App Service Plan to size or keep running, so it scales to zero and costs nothing at rest — the right shape for a site that's ~99% static content. (App Service is the alternative if you outgrow this; see [Why not App Service](#why-not-app-service) below.)
+The site runs on **Azure Static Web Apps (SWA)**, using its hybrid Next.js support — static pages served from Azure's CDN, the one API route (`/api/join`) on a small auto-provisioned backend function. No server to size or keep running. This is the simplest path; skip to [How it works](#how-it-works--reference) if you want the why before the how.
 
-> **Preview feature:** Next.js hybrid support on Azure Static Web Apps is in public preview as of this writing. It's stable enough for a low-traffic org site, but if Microsoft changes behavior, check [the hybrid Next.js docs](https://learn.microsoft.com/en-us/azure/static-web-apps/deploy-nextjs-hybrid) before assuming this guide is still accurate.
+### Quick deploy (~10 minutes, Portal only)
 
-### What's already set up in this repo
+1. **Push this repo to GitHub** if it isn't already there.
+2. **Delete `.github/workflows/azure-static-web-apps.yml`** from the repo first (or just don't worry if you skip this — see step 4). This repo ships a template workflow, but the Portal flow below generates its own, pre-wired with the right deployment token, which is less setup than reconciling two workflow files.
+3. **Azure Portal → Create a resource → Static Web Apps → Create.**
+   - **Plan type**: Free
+   - **Source**: GitHub → sign in → pick this repo and the `main` branch
+   - **Build Details → Build Presets**: `Next.js` — leave *App/Api/Output location* at their defaults
+   - **Review + create**
+4. Azure commits its own deploy workflow to your repo automatically and kicks off the first run. Open your repo's **Actions** tab and wait for it to go green (a few minutes).
+5. **Test it.** Open the URL on the Static Web App's **Overview** page in the Azure Portal and confirm:
+   - The homepage loads and the GPU model renders.
+   - The membership form works — or run `curl -X POST <your-url>/api/join -H "Content-Type: application/json" -d '{}'`, which should return a `422` validation error, not a `404`/`500`.
+6. **Done.** Every push to `main` redeploys; every pull request gets its own disposable preview URL, posted as a PR comment.
+
+That's the whole loop for a site with no environment variables set yet (the default — `/api/join` just logs until you wire up [Resend](#wiring-up-the-membership-form)). If you do need env vars, or want the CLI path, custom domains, or to understand what's actually happening under the hood, read on.
+
+### How it works / reference
 
 - `next.config.mjs` sets `output: "standalone"` — Next.js traces exactly which files each route needs instead of shipping all of `node_modules`, which keeps the deployed bundle under SWA's 250MB hybrid app limit and shrinks the managed function's cold start.
 - `scripts/postbuild-standalone.mjs` copies `public/` and `.next/static` into `.next/standalone` after every build (the `build` npm script runs it automatically). Without this, the standalone server can't find the GPU model or any hashed CSS/JS.
-- `.github/workflows/azure-static-web-apps.yml` is the CI/CD pipeline: push to `main` → build → deploy to production; open a PR → build → deploy to a disposable preview URL; close/merge the PR → preview environment torn down automatically.
+- `.github/workflows/azure-static-web-apps.yml` is a ready-made CI/CD workflow, for setups where you provision the Static Web App via CLI/Infra-as-code instead of the Portal's auto-linking (which generates its own, as described above) — don't run both against the same resource.
 - `.nvmrc` / `package.json#engines` pin Node to `20.9.0+`, which Next.js 16 requires.
 
-### One-time setup
+> **Preview feature:** Next.js hybrid support on Azure Static Web Apps is in public preview as of this writing. It's stable enough for a low-traffic org site, but if Microsoft changes behavior, check [the hybrid Next.js docs](https://learn.microsoft.com/en-us/azure/static-web-apps/deploy-nextjs-hybrid) before assuming this guide is still accurate.
 
-1. **Create the Static Web App resource.**
-   - Azure Portal → **Create a resource** → search **Static Web Apps** → **Create**.
-   - **Plan type**: Free (managed backend for the API route is included in every plan, including Free).
-   - **Source**: GitHub → authenticate → pick this repo and the `main` branch.
-   - **Build Details** → **Build Presets**: `Next.js`. Leave *App location*, *Api location*, and *Output location* at their defaults — the hybrid build preset infers them.
-   - **Review + create**.
+**CLI alternative to the Portal**, if you're scripting this or prefer not to click through the UI:
+```bash
+az login
+az staticwebapp create \
+  --name uh-pcs \
+  --resource-group <your-resource-group> \
+  --source https://github.com/<org>/<repo> \
+  --branch main \
+  --location eastus2 \
+  --sku Free \
+  --login-with-github
+```
+This also auto-generates and commits its own workflow file — same "don't keep two" caveat as the Portal path.
 
-   Or via the Azure CLI, if you'd rather not click through the portal:
-   ```bash
-   az login
-   az staticwebapp create \
-     --name uh-pcs \
-     --resource-group <your-resource-group> \
-     --source https://github.com/<org>/<repo> \
-     --branch main \
-     --location eastus2 \
-     --sku Free \
-     --login-with-github
-   ```
+**Environment variables**, once you need any (e.g. `RESEND_API_KEY`) — Next.js needs them at both build time and request time, so set them in two places:
+- **GitHub** → repo → **Settings → Secrets and variables → Actions** — feeds the build step.
+- **Azure Portal** → your Static Web App → **Settings → Environment variables** — feeds the running API route.
 
-2. **Let it commit the workflow, then reconcile.** If you used the Portal/CLI GitHub integration, Azure pushes its own copy of the deploy workflow (with the deployment token already filled in as a repo secret named something like `AZURE_STATIC_WEB_APPS_API_TOKEN_<random>`). This repo already ships `.github/workflows/azure-static-web-apps.yml` — either delete Azure's auto-generated one and rename its secret to `AZURE_STATIC_WEB_APPS_API_TOKEN` to match ours, or delete ours and let Azure's stand. Don't keep both — you'll get two competing deployments.
+**Custom domain**: Static Web App → **Custom domains** → add your domain → follow the CNAME/TXT instructions from your DNS provider. Azure issues and renews the TLS certificate for you.
 
-3. **Set environment variables in two places** (Next.js needs them at both build time and request time):
-   - **GitHub** → repo → **Settings → Secrets and variables → Actions** → add e.g. `RESEND_API_KEY` — this feeds the build step (see the `env:` block in the workflow).
-   - **Azure Portal** → your Static Web App → **Settings → Environment variables** → add the same keys — this feeds the running API route at request time.
-
-4. **Verify the deploy.** Check the **Actions** tab in GitHub for the workflow run, then open the URL from the Static Web App's **Overview** page. Confirm:
-   - The GPU model renders (Network tab → the `.glb` request should return `200`/`304` with `Cache-Control: public, max-age=31536000, immutable`).
-   - `/api/join` responds — submit the membership form, or `curl -X POST <your-url>/api/join -H "Content-Type: application/json" -d '{}'` should return a `422` validation error, not a `404`/`500`.
-   - If the cache header from step 4 is missing, Azure's static-asset CDN may be serving `/models/*` directly instead of proxying through the Next.js function — add the same rule to `staticwebapp.config.json`'s `globalHeaders` as a fallback (not included by default since it's unnecessary if the Next.js server is handling it).
-
-5. **(Optional) Custom domain.** Static Web App → **Custom domains** → add your domain → follow the CNAME/TXT instructions from your DNS provider. Azure issues and renews the TLS certificate for you.
+**If the `/models/*` cache header is missing** after deploy (check the Network tab for `Cache-Control: public, max-age=31536000, immutable` on the `.glb` request) — Azure's static-asset CDN may be serving that path directly instead of proxying through the Next.js function. Add the same rule to `staticwebapp.config.json`'s `globalHeaders` as a fallback (not included by default since it's unnecessary when the Next.js server handles it).
 
 ### Why not App Service
 
@@ -118,8 +122,13 @@ This is a living checklist, not just a one-time setup — read it before merging
 | `data/offerings.ts` | The six "Active Protocols" cards |
 | `data/sponsors.ts` | Sponsorship benefits |
 | `data/telemetry.ts` | Stats strip, fake terminal log lines, marquee terms |
+| `data/cudaSnippets.ts` | Code lines/tokens shown in the landing page's scrolling code tickers |
 
 Colors and fonts are defined once in `tailwind.config.ts` (`obsidian`, `gpu`, `mint`, `holo`, `uhred`, …). The UH red is intentionally used only as a ≤5% micro-accent (footer mark, error states).
+
+### Sponsorship packet PDF
+
+The "Request Sponsorship Packet" button at the top of `/sponsor` links to `public/sponsorship/PCS-Sponsorship_Packet.pdf`. To replace it with an updated packet, drop the new file in `public/sponsorship/` and update `SPONSORSHIP_PACKET_URL` in `data/sponsorship.ts` to match its filename (only needed if the filename itself changes — overwriting the same filename needs no code change).
 
 ## Wiring up the membership form
 
@@ -137,7 +146,7 @@ Then uncomment the marked block in `app/api/join/route.ts`.
 ## Motion & accessibility
 
 - `prefers-reduced-motion` is respected everywhere: the boot sequence is skipped, the 3D scene renders a static frame, CSS/Framer animations collapse to simple fades.
-- The boot sequence runs once per browser session (`sessionStorage`) and can be skipped with any key/click.
+- The boot sequence runs on every page load/refresh and can be skipped with any key/click.
 - Keyboard focus is visible site-wide; the mobile menu is a proper dialog; the form has labeled fields with inline `role="alert"` errors.
 - 3D particle counts and device pixel ratio scale down automatically on mobile.
 

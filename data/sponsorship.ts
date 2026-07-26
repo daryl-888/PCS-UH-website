@@ -118,6 +118,11 @@ export const tierBenefits: TierBenefitRow[] = [
 
 export const GIVING_PORTAL_URL = "https://giving.uh.edu/gift";
 
+/** Path to the sponsorship packet PDF, served straight from /public. To
+ *  replace it, drop the new file in public/sponsorship/ and update this
+ *  path to match its filename. */
+export const SPONSORSHIP_PACKET_URL = "/sponsorship/PCS-Sponsorship_Packet.pdf";
+
 /** "How to donate" steps, packet page 7 — the one-time-gift alternative to a tiered sponsorship. */
 export const donateSteps: string[] = [
   "Visit giving.uh.edu/gift.",

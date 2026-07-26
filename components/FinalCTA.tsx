@@ -24,11 +24,12 @@ export default function FinalCTA() {
   return (
     <section
       id="join"
-      className="relative flex min-h-screen min-h-dvh snap-start flex-col justify-center border-t border-line py-20"
+      className="relative flex min-h-screen min-h-dvh flex-col justify-center border-t border-line py-20"
       aria-label="Join UH PCS"
     >
       <AnimatedGrid depthShift />
       <CodeTickerVertical className="left-0" reverse />
+      <CodeTickerVertical className="right-[6%]" />
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-10">
         <Reveal>
           <TerminalCard
