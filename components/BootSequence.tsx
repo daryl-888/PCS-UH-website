@@ -5,18 +5,19 @@ import { AnimatePresence, motion } from "framer-motion";
 import { usePrefersReducedMotion } from "@/lib/hooks";
 
 const BOOT_LINES = [
-  "UH_PCS_SYSTEM_BOOT — UNIVERSITY OF HOUSTON",
-  "loading gpu_mesh.glb ................. [ OK ]",
-  "initializing compute grid ............ [ OK ]",
+  "PCS_BIOS v4.2.1 — UNIVERSITY OF HOUSTON",
+  "detecting compute devices ............ [ OK ]",
   "device 0: STUDENT_CURIOSITY (∞ cores)",
-  "syncing cuda workshop pipeline ....... [ OK ]",
+  "allocating shared memory ............. [ OK ]",
+  "launching kernel <<<grid, block>>> ... [ OK ]",
   "synchronizing 1024 threads ........... [ OK ]",
-  "status: ONLINE",
+  "mounting /parallel/future ............ [ OK ]",
 ];
 
 /**
- * Terminal POST sequence shown once per session on first load.
- * Skippable with any key / click. Skipped entirely for reduced motion.
+ * Terminal POST sequence shown once per browser (localStorage-gated) on
+ * first load, and again on every hard refresh of that first session tab —
+ * skippable with any key / click. Skipped entirely for reduced motion.
  */
 export default function BootSequence() {
   const reduced = usePrefersReducedMotion();

@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, MessagesSquare, Mail } from "lucide-react";
+import AnimatedGrid from "@/components/AnimatedGrid";
+import CodeTickerVertical from "@/components/CodeTickerVertical";
 import DecodeText from "@/components/DecodeText";
 import TerminalCard from "@/components/TerminalCard";
 import Reveal from "@/components/Reveal";
@@ -25,6 +27,8 @@ export default function FinalCTA() {
       className="relative flex min-h-screen min-h-dvh snap-start flex-col justify-center border-t border-line py-20"
       aria-label="Join UH PCS"
     >
+      <AnimatedGrid depthShift />
+      <CodeTickerVertical className="left-0" reverse />
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-10">
         <Reveal>
           <TerminalCard

@@ -7,6 +7,8 @@ import {
   Network,
   type LucideIcon,
 } from "lucide-react";
+import AnimatedGrid from "@/components/AnimatedGrid";
+import CodeTickerVertical from "@/components/CodeTickerVertical";
 import DecodeText from "@/components/DecodeText";
 import OfferNode from "@/components/OfferNode";
 import Reveal from "@/components/Reveal";
@@ -26,6 +28,8 @@ export default function Offerings() {
       className="relative flex min-h-screen min-h-dvh snap-start flex-col justify-center border-t border-line py-24"
       aria-label="What we offer"
     >
+      <AnimatedGrid depthShift />
+      <CodeTickerVertical className="left-0" reverse />
       <div className="mx-auto max-w-site px-4 sm:px-6 lg:px-10">
         {/* left column this time — alternates with Mission's right column so
             the GPU's open side changes with it as you scroll */}

@@ -52,6 +52,7 @@ const config: Config = {
         "beam-x": "beamX 2.6s ease-in-out infinite",
         "scan-y": "scanY 3.4s ease-in-out infinite",
         marquee: "marquee 32s linear infinite",
+        "marquee-y": "marqueeY 22s linear infinite",
         blink: "blink 1.1s step-end infinite",
         flicker: "flicker 5s linear infinite",
       },
@@ -75,6 +76,10 @@ const config: Config = {
         marquee: {
           "0%": { transform: "translateX(0)" },
           "100%": { transform: "translateX(-50%)" },
+        },
+        marqueeY: {
+          "0%": { transform: "translateY(0)" },
+          "100%": { transform: "translateY(-50%)" },
         },
         blink: {
           "0%, 100%": { opacity: "1" },
