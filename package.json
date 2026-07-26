@@ -4,7 +4,7 @@
   "private": true,
   "description": "University of Houston Parallel Computing Society — GPU compute command center website",
   "engines": {
-    "node": ">=20.9.0"
+    "node": "22.x"
   },
   "scripts": {
     "dev": "next dev",
