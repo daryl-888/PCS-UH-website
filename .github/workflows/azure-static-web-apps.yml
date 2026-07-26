@@ -23,14 +23,6 @@ jobs:
           submodules: false
           lfs: false
 
-      - name: Get ID token
-        uses: actions/github-script@v8
-        id: idtoken
-        with:
-          script: |
-            return await core.getIDToken()
-          result-encoding: string
-
       - name: Build and Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
@@ -41,7 +33,6 @@ jobs:
           app_location: "/"
           api_location: ""
           output_location: ""
-          github_id_token: ${{ steps.idtoken.outputs.result }}
         env:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
 
