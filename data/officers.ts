@@ -20,7 +20,6 @@ export const officers: Officer[] = [
     major: "Computer Engineering",
     focus: "GPU computing · Org direction",
     contact: "Dpalfaro@cougarnet.uh.edu",
-    phone: "(346) 221-6817",
   },
   {
     id: "[MAINTAINER-02]",
@@ -29,7 +28,6 @@ export const officers: Officer[] = [
     major: "Computer Science",
     focus: "Workshops · Curriculum",
     contact: "Nghang@cougarnet.uh.edu",
-    phone: "(415) 279-3342",
   },
   {
     id: "[MAINTAINER-03]",
@@ -38,7 +36,6 @@ export const officers: Officer[] = [
     major: "Computer Science",
     focus: "Infrastructure · GitHub org",
     contact: "Mahern69@cougarnet.uh.edu",
-    phone: "(832) 716-3924",
   },
   {
     id: "[MAINTAINER-04]",
@@ -47,7 +44,6 @@ export const officers: Officer[] = [
     major: "Computer Science",
     focus: "Industry outreach · Speakers",
     contact: "Jvieyra@cougarnet.uh.edu",
-    phone: "(832) 897-3668",
   },
   {
     id: "[MAINTAINER-05]",
@@ -56,7 +52,6 @@ export const officers: Officer[] = [
     major: "Finance",
     focus: "Branding · Growth",
     contact: "gvu2@cougarnet.uh.edu",
-    phone: "(617) 980-0040",
   },
   {
     id: "[MAINTAINER-06]",
