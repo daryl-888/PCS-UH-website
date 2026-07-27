@@ -31,6 +31,10 @@ jobs:
           mkdir -p .next/standalone/.next
           cp -r .next/static .next/standalone/.next/
           cp server.js .next/standalone/
+          # Standalone output-file-tracing doesn't always include this dir,
+          # but next/dist/server/config-utils.js requires it at runtime.
+          mkdir -p .next/standalone/node_modules/next/dist/compiled/webpack
+          cp -r node_modules/next/dist/compiled/webpack/. .next/standalone/node_modules/next/dist/compiled/webpack/
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
