@@ -139,6 +139,7 @@ function CameraRig({
   scrollProgress: MotionValue<number>;
 }) {
   const { camera } = useThree();
+  const justMounted = useRef(true);
 
   useFrame(() => {
     // Mobile stacks content instead of dodging left/right, so it doesn't
@@ -148,8 +149,14 @@ function CameraRig({
       interpolateStops(scrollProgress.get(), SCROLL_STOPS, POSE_ZOOM) *
       (mobile ? 1.2 : 1);
 
-    if (paused) {
+    if (paused || justMounted.current) {
+      // reduced-motion / hidden tab / first frame after mount: snap straight
+      // to the scroll-dictated distance instead of lerping. Without this, a
+      // remount (e.g. navigating back to "/") starts the dolly from the
+      // Canvas's hardcoded initial camera z (POSE_ZOOM[0]) regardless of
+      // actual scroll position, and visibly dollies into place over ~1s.
       camera.position.z = targetZ;
+      justMounted.current = false;
       return;
     }
     camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetZ, 0.045);
@@ -230,6 +237,7 @@ function GpuCard({
   scrollProgress: MotionValue<number>;
 }) {
   const group = useRef<THREE.Group>(null);
+  const justMounted = useRef(true);
   const { scene, animations } = useGLTF(MODEL_URL);
   const { actions } = useAnimations(animations, scene);
   const { size } = useThree();
@@ -297,12 +305,17 @@ function GpuCard({
     const targetTZ = interpolateStops(t, SCROLL_STOPS, POSE_TZ) * lateralScale;
     const targetScale = interpolateStops(t, SCROLL_STOPS, POSE_SCALE);
 
-    if (paused) {
-      // reduced-motion / hidden tab: snap straight to the scroll-dictated
-      // pose, no idle drift
+    if (paused || justMounted.current) {
+      // reduced-motion / hidden tab / first frame after mount: snap straight
+      // to the scroll-dictated pose instead of lerping. Without this, a
+      // remount (e.g. navigating back to "/") starts the lerp from whatever
+      // stale pose the group's initial JSX props left it at and visibly
+      // animates into place over ~1s — most noticeably as the card growing
+      // from a small idle scale up to its real size.
       group.current.rotation.set(targetRotX, targetY, targetRotZ);
       group.current.position.set(targetTX, targetTY, targetTZ);
       group.current.scale.setScalar(targetScale);
+      justMounted.current = false;
       return;
     }
 
