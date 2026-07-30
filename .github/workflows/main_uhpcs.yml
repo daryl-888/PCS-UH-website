@@ -74,15 +74,12 @@ jobs:
           slot-name: 'Production'
           package: .
 
-      - name: Disable Oryx build and force app refresh
+      - name: Restart app to pick up new deployment
         run: |
-          # Prevent Oryx from overwriting our standalone build on deploy.
-          # Set WEBSITE_RUN_FROM_PACKAGE=1 to run from the zip we just deployed.
-          az webapp config appsettings set \
+          # Remove the SCM_DO_BUILD_DURING_DEPLOYMENT override from the
+          # previous deploy — the app needs Oryx to provision Node.js.
+          az webapp config appsettings delete \
             --name uhpcs \
             --resource-group PCS \
-            --settings \
-              SCM_DO_BUILD_DURING_DEPLOYMENT=false \
-              WEBSITE_RUN_FROM_PACKAGE=1
-          # Force restart so the app picks up the new package immediately.
+            --setting-names SCM_DO_BUILD_DURING_DEPLOYMENT 2>/dev/null || true
           az webapp restart --name uhpcs --resource-group PCS
