@@ -66,6 +66,16 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_D80938F9846542ECAF43073B9A551D34 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_2681E106B5D54B8097C93E270675FB85 }}
 
+      - name: Clear stale run-from-package mode
+        run: |
+          # Delete WEBSITE_RUN_FROM_PACKAGE so the deploy step below
+          # extracts files to wwwroot directly instead of updating a
+          # cached zip that Azure never refreshes.
+          az webapp config appsettings delete \
+            --name uhpcs \
+            --resource-group PCS \
+            --setting-names WEBSITE_RUN_FROM_PACKAGE SCM_DO_BUILD_DURING_DEPLOYMENT 2>/dev/null || true
+
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
@@ -76,10 +86,4 @@ jobs:
 
       - name: Restart app to pick up new deployment
         run: |
-          # Remove the SCM_DO_BUILD_DURING_DEPLOYMENT override from the
-          # previous deploy — the app needs Oryx to provision Node.js.
-          az webapp config appsettings delete \
-            --name uhpcs \
-            --resource-group PCS \
-            --setting-names SCM_DO_BUILD_DURING_DEPLOYMENT 2>/dev/null || true
           az webapp restart --name uhpcs --resource-group PCS
