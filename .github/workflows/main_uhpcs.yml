@@ -73,3 +73,16 @@ jobs:
           app-name: 'uhpcs'
           slot-name: 'Production'
           package: .
+
+      - name: Disable Oryx build and force app refresh
+        run: |
+          # Prevent Oryx from overwriting our standalone build on deploy.
+          # Set WEBSITE_RUN_FROM_PACKAGE=1 to run from the zip we just deployed.
+          az webapp config appsettings set \
+            --name uhpcs \
+            --resource-group PCS \
+            --settings \
+              SCM_DO_BUILD_DURING_DEPLOYMENT=false \
+              WEBSITE_RUN_FROM_PACKAGE=1
+          # Force restart so the app picks up the new package immediately.
+          az webapp restart --name uhpcs --resource-group PCS
