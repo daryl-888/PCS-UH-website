@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useLayoutEffect, useMemo, useRef } from "react";
+import { Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useAnimations, useGLTF } from "@react-three/drei";
@@ -9,6 +9,69 @@ import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment
 import { usePrefersReducedMotion, useIsMobile, useTabVisible } from "@/lib/hooks";
 
 const MODEL_URL = "/models/geforce_rtx_4090_founders_edition.glb";
+
+// --- TEMPORARY DIAGNOSTIC: remove once the small-model bug is fixed ---
+// Live scene/camera values written from inside the Canvas; read by the
+// <DiagOverlay> DOM element rendered outside the Canvas.
+type Diag = {
+  initSceneScale: number | null;
+  initMaxDim: number | null;
+  initGroupScale: number | null;
+  initCamFov: number | null;
+  initCamZ: number | null;
+  initCanvasW: number | null;
+  initCanvasH: number | null;
+  liveSceneScale: number;
+  liveGroupScale: number;
+  liveCamFov: number;
+  liveCamZ: number;
+  liveCanvasW: number;
+  liveCanvasH: number;
+  mountCount: number;
+};
+const diag: Diag = {
+  initSceneScale: null,
+  initMaxDim: null,
+  initGroupScale: null,
+  initCamFov: null,
+  initCamZ: null,
+  initCanvasW: null,
+  initCanvasH: null,
+  liveSceneScale: 0,
+  liveGroupScale: 0,
+  liveCamFov: 0,
+  liveCamZ: 0,
+  liveCanvasW: 0,
+  liveCanvasH: 0,
+  mountCount: 0,
+};
+let mountCounter = 0;
+// Expose to DevTools console for easy inspection.
+if (typeof window !== "undefined") {
+  (window as unknown as { __pcsDiag?: Diag }).__pcsDiag = diag;
+}
+// ------------------------------------------------------------------
+
+/** TEMPORARY diagnostic: writes the live + first-frame camera/canvas
+ *  values to the shared diag object so the DOM-side <DiagOverlay> can
+ *  display them. Rendered inside the Canvas. */
+function DiagWriter() {
+  const { camera, size } = useThree();
+  useFrame(() => {
+    const cam = camera as THREE.PerspectiveCamera;
+    if (diag.initCamFov === null) {
+      diag.initCamFov = cam.fov;
+      diag.initCamZ = camera.position.z;
+      diag.initCanvasW = size.width;
+      diag.initCanvasH = size.height;
+    }
+    diag.liveCamFov = cam.fov;
+    diag.liveCamZ = camera.position.z;
+    diag.liveCanvasW = size.width;
+    diag.liveCanvasH = size.height;
+  });
+  return null;
+}
 
 // ---------------------------------------------------------------------
 // SCROLL CHOREOGRAPHY — this is the one spot that controls how the GPU
@@ -273,6 +336,11 @@ function GpuCard({
     const maxDim = Math.max(size.x, size.y, size.z) || 1;
     const scale = 90 / maxDim;
     scene.scale.setScalar(scale);
+    // --- TEMP DIAG: capture the values useMemo measures + computes ---
+    diag.initMaxDim = (diag.initMaxDim === null) ? maxDim : diag.initMaxDim;
+    diag.initSceneScale = (diag.initSceneScale === null) ? scale : diag.initSceneScale;
+    diag.liveSceneScale = scale;
+    // ---------------------------------------------------------------
     const center = new THREE.Box3()
       .setFromObject(scene)
       .getCenter(new THREE.Vector3());
@@ -369,7 +437,25 @@ function GpuCard({
     group.current.scale.setScalar(
       THREE.MathUtils.lerp(group.current.scale.x, targetScale, 0.045)
     );
+
+    // --- TEMP DIAG: capture live group scale + first-frame snapshot ---
+    diag.liveGroupScale = group.current.scale.x;
+    if (diag.initGroupScale === null && diag.mountCount > 0) {
+      // only set after mount effect has run (see useEffect below)
+    }
+    // --------------------------------------------------------------
   });
+
+  // --- TEMP DIAG: increment a mount counter on every GpuCard mount ---
+  useEffect(() => {
+    diag.mountCount = ++mountCounter;
+    // Capture first-frame group scale on the next paint — read here from
+    // the ref after the layout effect has snapped it below.
+    if (group.current && diag.initGroupScale === null) {
+      diag.initGroupScale = group.current.scale.x;
+    }
+  }, []);
+  // ------------------------------------------------------------------
 
   return (
     <group
@@ -416,9 +502,71 @@ export default function GpuModel({
         <Suspense fallback={null}>
           <GpuCard paused={paused} mobile={mobile} scrollProgress={scrollProgress} />
         </Suspense>
+
+        {/* TEMP DIAG: writes camera/canvas values every frame */}
+        <DiagWriter />
       </Canvas>
+      {/* TEMP DIAG: visible overlay showing live + first-frame values */}
+      <DiagOverlay />
     </div>
   );
 }
 
 useGLTF.preload(MODEL_URL);
+
+/** TEMPORARY diagnostic: DOM-side overlay that reads the shared diag
+ *  object and renders the values as fixed-position text so we can see
+ *  exactly what's wrong on first mount vs after navigation.  Remove
+ *  once the root cause is fixed. */
+function DiagOverlay() {
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    let raf = 0;
+    const loop = () => {
+      setTick((t) => (t + 1) % 1000);
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+  const d = diag;
+  const fmt = (n: number | null) => (n === null ? "null" : n.toFixed(2));
+  return (
+    <div
+      style={{
+        position: "fixed",
+        top: 70,
+        right: 12,
+        zIndex: 95,
+        background: "rgba(0,0,0,0.85)",
+        color: "#10b981",
+        font: "11px/1.45 ui-monospace, monospace",
+        padding: "8px 10px",
+        borderRadius: "6px",
+        border: "1px solid #10b981",
+        minWidth: "230px",
+        pointerEvents: "none",
+        whiteSpace: "pre",
+      }}
+    >
+      <div style={{ color: "#f59e0b", marginBottom: 4 }}>
+        GPU DIAG (mount #{d.mountCount})
+      </div>
+      <div style={{ textDecoration: "underline" }}>first frame</div>
+      {`sceneScale: ${fmt(d.initSceneScale)}`}
+      {`\nmaxDim:     ${fmt(d.initMaxDim)}`}
+      {`\ngroupScale: ${fmt(d.initGroupScale)}`}
+      {`\ncamFov:     ${fmt(d.initCamFov)}`}
+      {`\ncamZ:       ${fmt(d.initCamZ)}`}
+      {`\ncanvas:     ${fmt(d.initCanvasW)}x${fmt(d.initCanvasH)}`}
+      <div style={{ textDecoration: "underline", marginTop: 6 }}>
+        live
+      </div>
+      {`sceneScale: ${fmt(d.liveSceneScale)}`}
+      {`\ngroupScale: ${fmt(d.liveGroupScale)}`}
+      {`\ncamFov:     ${fmt(d.liveCamFov)}`}
+      {`\ncamZ:       ${fmt(d.liveCamZ)}`}
+      {`\ncanvas:     ${fmt(d.liveCanvasW)}x${fmt(d.liveCanvasH)}`}
+    </div>
+  );
+}
