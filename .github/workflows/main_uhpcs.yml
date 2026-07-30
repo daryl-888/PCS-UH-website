@@ -66,30 +66,24 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_D80938F9846542ECAF43073B9A551D34 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_2681E106B5D54B8097C93E270675FB85 }}
 
-      - name: Ensure run-from-package mode is active
+      - name: Restore run-from-package mode and set startup
         run: |
-          # The app requires WEBSITE_RUN_FROM_PACKAGE=1 to provision
-          # correctly. Set it before deploy so the action uses
-          # RunFromZip (and the app finds its dependencies).
           az webapp config appsettings set \
             --name uhpcs \
             --resource-group PCS \
             --settings WEBSITE_RUN_FROM_PACKAGE=1 2>/dev/null || true
 
-      - name: Deploy app using az webapp deploy
-        run: |
-          # Package the standalone output for deployment.
-          zip -r deploy.zip .
-          # Deploy directly — az webapp deploy gives us explicit
-          # control over the zip update vs relying on the action.
-          az webapp deploy \
-            --resource-group PCS \
-            --name uhpcs \
-            --src-path deploy.zip \
-            --type zip \
-            --async false
-          rm -f deploy.zip
+      - name: 'Deploy to Azure Web App'
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'uhpcs'
+          slot-name: 'Production'
+          package: .
 
-      - name: Restart app
+      - name: Capture deployment logs and restart
         run: |
+          echo "=== Latest deployment log ==="
+          az webapp log deployment show --name uhpcs --resource-group PCS || true
+          echo "=== Restarting ==="
           az webapp restart --name uhpcs --resource-group PCS
