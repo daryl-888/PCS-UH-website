@@ -175,7 +175,11 @@ function CameraRig({
 function ResponsiveCameraRig() {
   const { camera, size } = useThree();
 
-  useEffect(() => {
+  // useLayoutEffect (not useEffect) so the FOV is corrected BEFORE the
+  // first paint. Otherwise the model renders one frame at the Canvas's
+  // hardcoded initial FOV (32) before the responsive adjustment runs,
+  // which can briefly read as the wrong size on first mount.
+  useLayoutEffect(() => {
     const rigScale = THREE.MathUtils.clamp(
       size.height / BASE_VIEWPORT_HEIGHT,
       0.55,
