@@ -1,9 +1,9 @@
 "use client";
 
-import { Suspense, useEffect, useMemo, useRef } from "react";
+import { Suspense, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Float, useAnimations, useGLTF } from "@react-three/drei";
+import { useAnimations, useGLTF } from "@react-three/drei";
 import { type MotionValue, useMotionValueEvent } from "framer-motion";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { usePrefersReducedMotion, useIsMobile, useTabVisible } from "@/lib/hooks";
@@ -139,7 +139,17 @@ function CameraRig({
   scrollProgress: MotionValue<number>;
 }) {
   const { camera } = useThree();
-  const justMounted = useRef(true);
+
+  // Snap the camera to the scroll-dictated distance before the first paint.
+  // Without this, a remount (e.g. navigating back to "/") starts the dolly
+  // from the Canvas's hardcoded initial camera z (POSE_ZOOM[0]) regardless
+  // of actual scroll position, and visibly dollies into place over ~1s.
+  useLayoutEffect(() => {
+    const targetZ =
+      interpolateStops(scrollProgress.get(), SCROLL_STOPS, POSE_ZOOM) *
+      (mobile ? 1.2 : 1);
+    camera.position.z = targetZ;
+  }, [camera, mobile, scrollProgress]);
 
   useFrame(() => {
     // Mobile stacks content instead of dodging left/right, so it doesn't
@@ -149,14 +159,8 @@ function CameraRig({
       interpolateStops(scrollProgress.get(), SCROLL_STOPS, POSE_ZOOM) *
       (mobile ? 1.2 : 1);
 
-    if (paused || justMounted.current) {
-      // reduced-motion / hidden tab / first frame after mount: snap straight
-      // to the scroll-dictated distance instead of lerping. Without this, a
-      // remount (e.g. navigating back to "/") starts the dolly from the
-      // Canvas's hardcoded initial camera z (POSE_ZOOM[0]) regardless of
-      // actual scroll position, and visibly dollies into place over ~1s.
+    if (paused) {
       camera.position.z = targetZ;
-      justMounted.current = false;
       return;
     }
     camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetZ, 0.045);
@@ -237,7 +241,6 @@ function GpuCard({
   scrollProgress: MotionValue<number>;
 }) {
   const group = useRef<THREE.Group>(null);
-  const justMounted = useRef(true);
   const { scene, animations } = useGLTF(MODEL_URL);
   const { actions } = useAnimations(animations, scene);
   const { size } = useThree();
@@ -284,6 +287,34 @@ function GpuCard({
     });
   }, [scene]);
 
+  // Snap the card to the scroll-dictated pose before the first paint.
+  // Without this, the model renders one frame at its hardcoded initial
+  // pose (scale ~1) and then visibly lerps up to the real pose — most
+  // noticeably as the card growing from a small idle scale up to its
+  // real size.
+  useLayoutEffect(() => {
+    if (!group.current) return;
+    const t = scrollProgress.get();
+    const aspect = size.width / Math.max(size.height, 1);
+    const lateralScale = mobile
+      ? 0.18
+      : THREE.MathUtils.clamp(aspect / BASE_ASPECT, 0.6, 1.45);
+
+    group.current.rotation.set(
+      interpolateStops(t, SCROLL_STOPS, POSE_X),
+      interpolateStops(t, SCROLL_STOPS, POSE_Y),
+      interpolateStops(t, SCROLL_STOPS, POSE_Z)
+    );
+    group.current.position.set(
+      interpolateStops(t, SCROLL_STOPS, POSE_TX) * lateralScale,
+      interpolateStops(t, SCROLL_STOPS, POSE_TY),
+      interpolateStops(t, SCROLL_STOPS, POSE_TZ) * lateralScale
+    );
+    group.current.scale.setScalar(
+      interpolateStops(t, SCROLL_STOPS, POSE_SCALE)
+    );
+  }, [mobile, scrollProgress, size]);
+
   useFrame((state) => {
     if (!group.current) return;
     const t = scrollProgress.get();
@@ -305,17 +336,12 @@ function GpuCard({
     const targetTZ = interpolateStops(t, SCROLL_STOPS, POSE_TZ) * lateralScale;
     const targetScale = interpolateStops(t, SCROLL_STOPS, POSE_SCALE);
 
-    if (paused || justMounted.current) {
-      // reduced-motion / hidden tab / first frame after mount: snap straight
-      // to the scroll-dictated pose instead of lerping. Without this, a
-      // remount (e.g. navigating back to "/") starts the lerp from whatever
-      // stale pose the group's initial JSX props left it at and visibly
-      // animates into place over ~1s — most noticeably as the card growing
-      // from a small idle scale up to its real size.
+    if (paused) {
+      // reduced-motion / hidden tab: snap straight to the scroll-dictated
+      // pose instead of lerping.
       group.current.rotation.set(targetRotX, targetY, targetRotZ);
       group.current.position.set(targetTX, targetTY, targetTZ);
       group.current.scale.setScalar(targetScale);
-      justMounted.current = false;
       return;
     }
 
@@ -384,13 +410,7 @@ export default function GpuModel({
         <LightingRig />
 
         <Suspense fallback={null}>
-          <Float
-            speed={reduced ? 0 : 1}
-            rotationIntensity={reduced ? 0 : 0.05}
-            floatIntensity={reduced ? 0 : 0.07}
-          >
-            <GpuCard paused={paused} mobile={mobile} scrollProgress={scrollProgress} />
-          </Float>
+          <GpuCard paused={paused} mobile={mobile} scrollProgress={scrollProgress} />
         </Suspense>
       </Canvas>
     </div>

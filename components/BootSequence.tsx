@@ -15,11 +15,19 @@ const BOOT_LINES = [
 ];
 
 /**
- * Terminal POST sequence shown on every load/refresh of the landing page —
- * skippable with any key / click. Skipped entirely for reduced motion.
- * (Previously gated to "once ever" via localStorage; dropped since the
- * point is a boot moment every time you arrive, refresh included.)
+ * Terminal POST sequence shown only on the first visit or a manual refresh
+ * of the landing page — skippable with any key / click. Skipped entirely for
+ * reduced motion.
+ *
+ * Gating uses module-level state: it survives client-side (SPA) route
+ * changes, so navigating away and back to "/" never replays the boot, but
+ * it resets on any full document load — i.e. the initial visit AND every
+ * manual refresh — so the boot runs again in exactly those two cases.
  */
+
+// Resets only on full page load; persists across SPA navigation.
+let bootShownThisDocument = false;
+
 export default function BootSequence() {
   const reduced = usePrefersReducedMotion();
   const [show, setShow] = useState(false);
@@ -37,6 +45,11 @@ export default function BootSequence() {
   // Decide whether to boot (client only — avoids a reduced-motion mismatch
   // between server and client render).
   useEffect(() => {
+    // Already booted during this document load (e.g. SPA navigation back
+    // to "/") — skip. The flag resets only on a full page load/refresh.
+    if (bootShownThisDocument) return;
+    // Mark immediately so even navigating away mid-boot counts as shown.
+    bootShownThisDocument = true;
     const reducedNow = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
