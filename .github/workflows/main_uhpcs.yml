@@ -66,24 +66,30 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_D80938F9846542ECAF43073B9A551D34 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_2681E106B5D54B8097C93E270675FB85 }}
 
-      - name: Clear stale run-from-package mode
+      - name: Ensure run-from-package mode is active
         run: |
-          # Delete WEBSITE_RUN_FROM_PACKAGE so the deploy step below
-          # extracts files to wwwroot directly instead of updating a
-          # cached zip that Azure never refreshes.
-          az webapp config appsettings delete \
+          # The app requires WEBSITE_RUN_FROM_PACKAGE=1 to provision
+          # correctly. Set it before deploy so the action uses
+          # RunFromZip (and the app finds its dependencies).
+          az webapp config appsettings set \
             --name uhpcs \
             --resource-group PCS \
-            --setting-names WEBSITE_RUN_FROM_PACKAGE SCM_DO_BUILD_DURING_DEPLOYMENT 2>/dev/null || true
+            --settings WEBSITE_RUN_FROM_PACKAGE=1 2>/dev/null || true
 
-      - name: 'Deploy to Azure Web App'
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: 'uhpcs'
-          slot-name: 'Production'
-          package: .
+      - name: Deploy app using az webapp deploy
+        run: |
+          # Package the standalone output for deployment.
+          zip -r deploy.zip .
+          # Deploy directly — az webapp deploy gives us explicit
+          # control over the zip update vs relying on the action.
+          az webapp deploy \
+            --resource-group PCS \
+            --name uhpcs \
+            --src-path deploy.zip \
+            --type zip \
+            --async false
+          rm -f deploy.zip
 
-      - name: Restart app to pick up new deployment
+      - name: Restart app
         run: |
           az webapp restart --name uhpcs --resource-group PCS
